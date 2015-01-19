@@ -31,12 +31,16 @@ function [idx_st, idx_ed] = divideSingleEpochGroup(epochs)
 % Divide the date into each epoch group based on time. 
 % Calculate time difference between ending of previous stim and
 % beginning of the following stimlus
+    if length(epochs) == 1
+        idx_st = 1; idx_ed = 1;
+        return;
+    end
     d_time = 2;%threshold (in sec)
     t_start = get2(epochs,'epochStartTime');
     dur_stim = ( get2(epochs,'preTime') + get2(epochs,'stimTime')...
                + get2(epochs,'tailTime') )/1000;% in second
     try
-    time_diff = diff(t_start)-dur_stim(1:end-1);
+        time_diff = diff(t_start)-dur_stim(1:end-1);
     catch
         error('problem with dividing epochs into a epoch group');
     end
