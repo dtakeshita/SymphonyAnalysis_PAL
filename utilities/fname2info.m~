@@ -10,8 +10,7 @@ function [rig, exp_date] = fname2info( fname )
     if length(str)==6
         yr = str2num(str(5:6))+2000;%Asuume no symphony before 2000:)
         mth = str2num(str(1:2));
-        dt = str2num(str(3:4)); 
+        dt = str2num(str(3:4));   
     end
-    exp_date = [yr, mth, dt];
 end
 

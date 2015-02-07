@@ -6,21 +6,22 @@ function addRstarMean( epochs, file_name)
         clear; close all;
         load('/Users/dtakeshi/Documents/Data/RigA/testfiles/LEDFactorPulse_TestEpochs.mat');%s is loaded
         epochs = s.epochs;%epochs is an array of EpochData instances
-        rig_name = 'a';exp_yr = '2015'; exp_date = '0127';
+        rig_name = 'a'; exp_date = [2015, 1, 27];
     else
-        [rig_name, exp_yr, exp_date] = fname2info( fname );
+        [rig_name, exp_date] = fname2info( fname );
     end
     %% function main
     %read NDFs
-    [t_NDF, NDFs] = readNDF_log(rig_name, exp_yr, exp_date);
+    [t_NDF, NDFs] = readNDF_log(rig_name, exp_date);
     OD_list = readNDFcalibration();
     % Load linearity correction table
     t_stim_set = unique(get2(epochs,'stimTime'));
     ch_LED_set = unique(get2(epochs,'StimulusLED'));
     tableMap = readLinearityCorrection(rig_name, ch_LED_set, t_stim_set);
     % Do!!--Get reference voltage & intensity and calculate R* value!!
-    intensity2Rstar();
-    
+    I = readIntensityMeasurement( exp_date );
+    Rstar_ref = intensity2Rstar(I.Power, (I.DiameterX+I.DiameterY)/2);
+    Vref = I.Voltage;
     for n=1:length(epochs)
         t_data = epochs(n).attributes('inputTime');
         namesNDF = getNDFnames(t_data, t_NDF, NDFs); 
@@ -33,7 +34,7 @@ function addRstarMean( epochs, file_name)
         table_key = sprintf('%s-%dms',ch_LED,t_stim);
         table = tableMap(table_key);
         %Do!!--convert voltage to R*!!!
-        %R*_V = R*Vref * C(V)/C(Vref)
+        Rstar = Rstar_ref * C(V)/C(Vref);
         
         
     end

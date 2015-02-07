@@ -1,7 +1,7 @@
-function out = readIntensityMeasurement( exp_date )
+function table = readIntensityMeasurement( exp_date )
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
-    if nargin==0%tst  purpose
+    if nargin==0
         exp_date = [2015,1,27];
         
     end
@@ -14,17 +14,9 @@ function out = readIntensityMeasurement( exp_date )
     date_str = datestr([exp_date 0 0 0]);
     idx_measured = find(cellfun( @(x)datetime(x,'ConvertFrom','excel')<=date_str,...
         table(2:end,1)),1,'last')+1;
-    out.Voltage = get_value(values_map, 'Voltage', idx_measured);
-    out.Power = get_value(values_map, 'Power', idx_measured);
-    out.DiameterX = get_value(values_map, 'DiameterX', idx_measured);
-    out.DiameterY = get_value(values_map, 'DiameterY', idx_measured);
+    vovalues_map('Voltage');
+   
     
-end
-
-function value = get_value(values_map,key,idx)
-    tmp = values_map(key);
-    value = tmp(idx);
-    value = value{:};
 end
 
 function field_names = get_field_names(field_names)
