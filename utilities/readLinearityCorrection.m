@@ -25,11 +25,29 @@ function out = readLinearityCorrection( rig_name, ch_LED_set, t_stim_set )
              end
              % load and store in a map
              Linearity= load_table(file_fullpath, flist, ch_LED, t_stim);
+             % Make the table monotonic
+             Linearity = avoid_duplicate(Linearity);
              str = sprintf('%s-%dms',ch_LED, t_stim);
              out(str) = Linearity;
          end
      end
 
+end
+
+function Linearity = avoid_duplicate(Linearity)
+    %Avoid identical voltage points
+    [Vuq, idx] = unique(Linearity.Voltage);
+    Cuq = Linearity.Mean(idx);
+    SDuq = Linearity.SD(idx);
+    %To avoid non-monotonic point in C, avoid V less than 1mV
+    %(this is not the best way, but shouldn't cause a big problem)
+    idx_rm = find(diff(Vuq)<1);
+    idx_keep = setdiff(1:length(Vuq),idx_rm);
+    Linearity.Voltage = Vuq(idx_keep);
+    Linearity.Mean = Cuq(idx_keep);
+    Linearity.SD = SDuq(idx_keep);
+    f = dbstack();
+    Linearity.Note =sprintf('Some data points are removed in %s (%s)',f(1).name, f(1).file);
 end
 
 function out = load_table(file_fullpath, flist, ch_LED, t_stim)
@@ -51,7 +69,7 @@ end
 
 function out = choose_bestmatch(flist,t_stim)
     info = struct2cell(flist);
-    fnames = info(1,:)
+    fnames = info(1,:);
     [t_stim_list, idx_sort] = sort(cellfun(@(x)str2num(pick_str(x,'stim','ms',1,1)),fnames));%in ascending order
     idx = find(t_stim == t_stim_list);
     if isempty(idx)

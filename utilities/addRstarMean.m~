@@ -13,7 +13,7 @@ function addRstarMean( epochs, file_name)
     %% function main
     %read NDFs
     [t_NDF, NDFs] = readNDF_log(rig_name, exp_date);
-    OD_list = readNDFcalibration();
+    %OD_list = readNDFcalibration();%ODs are hard-coded in NDF_ODlist
     % Load linearity correction table
     t_stim_set = unique(get2(epochs,'stimTime'));
     ch_LED_set = unique(get2(epochs,'StimulusLED'));
@@ -24,22 +24,28 @@ function addRstarMean( epochs, file_name)
     Vref = I.Voltage;
     for n=1:length(epochs)
         t_data = epochs(n).attributes('inputTime');
-        namesNDF = getNDFnames(t_data, t_NDF, NDFs); 
+        namesNDF = getNDFnames(t_data, t_NDF, NDFs);
         trans = getTransmittance(namesNDF,rig_name);
         ch_LED = epochs(n).attributes('StimulusLED');
         vol = epochs(n).attributes('pulseAmplitude');
         t_stim = epochs(n).attributes('stimTime');
-        namesNDF = getNDFnames(t_data, t_NDF, NDFs);
-        trans = getTransmittance(namesNDF,rig_name);
         table_key = sprintf('%s-%dms',ch_LED,t_stim);
         table = tableMap(table_key);
-        %Do!!--convert voltage to R*!!!
-        Rstar = Rstar_ref * C(V)/C(Vref);
-        
-        
+        %Calculate R*
+        Rstar_sec = Rstar_ref * getCvalue(table.Voltage,table.Mean,vol)...
+            /getCvalue(table.Voltage, table.Mean, Vref)*trans;
+        Rstar = Rstar_sec*t_stim/1000;
+        epochs(n).attributes('RstarMean')=Rstar;
+        %Store information about R* calculation
+        info_tmp.NDFs = namesNDF;info_tmp.NDF_OD = -log10(trans);
+        info_tmp.Linearity = table;
+        epochs(n).attributes('NDFs') = namesNDF;
     end
 end
 
+function Cq = getCvalue(C,V,Vq)
+    Cq = interp1(C,V,Vq);
+end
 
 function namesNDF = getNDFnames(t_data, t_NDF, NDFs)
     t_data = datenum(t_data)-floor(datenum(t_data));

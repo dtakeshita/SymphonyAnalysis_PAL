@@ -3,7 +3,8 @@ function [t_switch, NDF] = readNDF_log(rig, exp_date)
 %   Detailed explanation goes here
     if nargin == 0
         rig = 'a';
-        exp_date = [2015,1,27];
+        %exp_date = [2015,1,27];
+        exp_date = [2015,2,5];
     end
     file_root = '/Users/dtakeshi/Documents/Data';
     rig_folder = ['Rig',upper(rig)];
