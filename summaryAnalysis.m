@@ -1,6 +1,6 @@
 function summaryAnalysis()
     global ANALYSIS_FOLDER
-    cellName = '012715Ac1';
+    cellName = '012715Ac2';
     load([ANALYSIS_FOLDER 'analysisTrees' filesep cellName]);%analysisTree is loaded
     tr = analysisTree;
     idx = find(tr.treefun(@(x)~isempty(strfind(x.name,'LightStep_20'))));
@@ -20,12 +20,17 @@ function summaryAnalysis()
         for nc = 1:n_child
             cur_node = tr.Node{childID(nc)};
             [FH,GH]=get_subplot_id(nrow,ncol,ngph);
-            subplot(4,2,nc)
+            figure(FH)
+            subplot(nrow,ncol,GH)
             plotSpikeRaster(cur_node.spikeTimes_all.value,...
                 'PlotType','vertline','LineFormat',LineFormat,...
-                'VertSpikeHeight',0.8);
+                'VertSpikeHeight',0.8,'XLimForCell',[-0.5 0.52]);
             title(cur_node.name);
             ngph = enlargeFigure(ngph, ngph_fig, nTotalGraphs,FH,ann_txt);
         end
+        %% plot base firing rate stat
+        FH = FH+1;
+        
+        
     end
 end

@@ -76,7 +76,7 @@ for i=1:L
     baselineSpikeTimes = spikeTimes(spikeTimes < baselineEnd);
     baselineInterSpTimes = diff(baselineSpikeTimes);
     outputStruct.baselineRate.value(i) = length(baselineSpikeTimes) / baselineIntervalLen;
-    %DT get poststimulus firing rate
+    %DT get poststimulus firingrate
     poststimSpikeTimes = spikeTimes(spikeTimes > intervalEnd);
     outputStruct.poststimRate.value(i) = length(poststimSpikeTimes) / poststimIntervalLen;
     
