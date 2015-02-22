@@ -83,8 +83,15 @@ for i=1:L
     blISI{i} = baselineInterSpTimes; %ISI to next spike
     blISI2{i} = baselineInterSpTimes(1:end-1)+baselineInterSpTimes(2:end); %ISI to two-spikes over
 end
-%DT add spike timing
+%DT add spike timing & intervals
 outputStruct.spikeTimes_all.value = spikeTimesSet;
+% outputStruct.stimInterval.value = [intervalStart intervalEnd];
+% outputStruct.prestimInterval.value= [baselineStart baselineEnd];
+% outputStruct.poststimInterval.value = [intervalEnd max(xvals)];
+outputStruct.stimOnset.value = intervalStart;
+outputStruct.stimOffset.value = intervalEnd;
+outputStruct.recordingOnset.value = baselineStart;
+outputStruct.recordingOffset.value = max(xvals);
 %DT end
 
 %add spikeAmp stuff
@@ -117,8 +124,29 @@ for i=1:L
         outputStruct.spikeTimes_all.units = '';
         outputStruct.spikeTimes_all.type = '';
         
+        outputStruct.stimOnset.units = 's';
+        outputStruct.stimOnset.type = 'combinedAcrossEpochs';
+        
+        outputStruct.stimOffset.units = 's';
+        outputStruct.stimOffset.type = 'combinedAcrossEpochs';
+        
+        outputStruct.recordingOnset.units = 's';
+        outputStruct.recordingOnset.type = 'combinedAcrossEpochs';
+        
+        outputStruct.recordingOffset.units = 's';
+        outputStruct.recordingOffset.type = 'combinedAcrossEpochs';
+        
         outputStruct.poststimRate.units = 'Hz';
         outputStruct.poststimRate.type = 'byEpoch';
+%         
+%         outputStruct.stimInterval.units = 's';
+%         outputStruct.stimInterval.type = 'combinedAcrossEpochs';
+%         
+%         outputStruct.prestimInterval.units = 's';
+%         outputStruct.prestimInterval.type = 'combinedAcrossEpochs';
+%         
+%         outputStruct.poststimInterval.units = 's';
+%         outputStruct.poststimInterval.type = 'combinedAcrossEpochs';
         % DT-end
         
         outputStruct.fullISI.units = 's';
@@ -164,6 +192,10 @@ for i=1:L
         outputStruct.spikeRate_stimInterval.units = 'Hz';
         outputStruct.spikeRate_stimInterval.type = 'byEpoch';
         outputStruct.spikeRate_stimInterval.value = ones(1,L) * NaN;
+        
+        outputStruct.spikeCount_poststim.units = 'spikes';
+        outputStruct.spikeCount_poststim.type = 'byEpoch';
+        outputStruct.spikeCount_poststim.value = ones(1,L) * NaN;
         
         outputStruct.spikeCount_ONSET_400ms.units = 'spikes';
         outputStruct.spikeCount_ONSET_400ms.type = 'byEpoch';
@@ -345,6 +377,12 @@ for i=1:L
         outputStruct.OFFSET_FRrampLatency.type = 'singleValue';
         outputStruct.OFFSET_FRrampLatency.value = NaN;
         
+        %DT - PSTH
+        outputStruct.PSTH.units = 'Hz';
+        outputStruct.PSTH.type = 'combinedAcrossEpochs';
+        outputStruct.PSTH.value = {};
+        outputStruct.PSTH.xvalue = {};
+        
         outputStruct.ONSETpsth.units = 'Hz';
         outputStruct.ONSETpsth.type = 'combinedAcrossEpochs';
         outputStruct.ONSETpsth.value = [];
@@ -381,6 +419,10 @@ for i=1:L
     spikeCount = length(find(spikeTimes >= intervalStart & spikeTimes < intervalEnd));
     outputStruct.spikeCount_stimInterval.value(i) = spikeCount;
     outputStruct.spikeRate_stimInterval.value(i) = spikeCount/responseIntervalLen;
+    
+    %count spikes after stimulus
+    spikeCount = length(find(spikeTimes >= intervalEnd));
+    outputStruct.spikeCount_poststim.value(i) = spikeCount;
     
     %count spikes in 400 ms after onset and offset
     if responseIntervalLen >= 0.4
@@ -499,6 +541,9 @@ ONSETresponseEndTime_max = max(ONSETresponseEndTime_all);
 OFFSETresponseStartTime_min = min(OFFSETresponseStartTime_all);
 OFFSETresponseEndTime_max = max(OFFSETresponseEndTime_all);
 [psth, xvals] = cellData.getPSTH(epochInd, ip.Results.BinWidth, ip.Results.DeviceName);
+outputStruct.PSTH.xvalue{1} = xvals;
+outputStruct.PSTH.value{1} = psth;
+
 %ONSET
 if ONSETresponseEndTime_max > ONSETresponseStartTime_min
     xvals_onset = xvals(xvals >= ONSETresponseStartTime_min & xvals < ONSETresponseEndTime_max);
