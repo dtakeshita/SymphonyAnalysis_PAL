@@ -1,6 +1,11 @@
-function [ngph, FH, LH] = tile_graph( dat, para_fig, h_plot, ngph, FHoffset)
+function [ngph, FH, LH] = tile_graph( dat, para_fig, h_plot, ngph, FHoffset, varargin)
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
+    if nargin >= 6
+        dat_extra = varargin{1};
+    else
+        dat_extra = '';
+    end
     nrow = para_fig.nrow; ncol = para_fig.ncol;
     nTotalGraphs = para_fig.nTotalGraphs;
     ngph_fig = nrow*ncol;
@@ -10,7 +15,7 @@ function [ngph, FH, LH] = tile_graph( dat, para_fig, h_plot, ngph, FHoffset)
     AH = subplot(nrow,ncol,GH);
     %plot
     if isa(h_plot,'function_handle')
-        LH = execute_func(dat, h_plot);
+        LH = execute_func(dat, h_plot, dat_extra);
     else %assume lind handle
         LH = copyobj(h_plot, AH);
     end
@@ -53,7 +58,7 @@ function set_label(p,name)
 
 end
 
-function LH = execute_func(dat, h_func)
+function LH = execute_func(dat, h_func, dat_extra)
     switch func2str(h_func)
         case 'plot'
             if ~iscell(dat.x)
@@ -64,5 +69,8 @@ function LH = execute_func(dat, h_func)
             end
         case 'errorbar'
             LH = h_func(dat.x, dat.y, dat.y_error);
+        case 'plotEpochData'
+            %dat is a structure
+            
     end
 end

@@ -544,7 +544,7 @@ for i=1:L
 end %end loop over epochs
 
 %PSTH-based parameters
-smoothingWindow = 0;%msec
+smoothingWindow = 20;%msec
 PSTH_binwidth = 10;%msec
 ONSETresponseStartTime_min = min(ONSETresponseStartTime_all);
 ONSETresponseEndTime_max = max(ONSETresponseEndTime_all);
@@ -554,9 +554,6 @@ OFFSETresponseEndTime_max = max(OFFSETresponseEndTime_all);
 [psth, xvals] = cellData.getPSTH(epochInd, PSTH_binwidth, ip.Results.DeviceName, smoothingWindow);
 outputStruct.PSTH.xvalue{1} = xvals;
 outputStruct.PSTH.value{1} = psth;
-%outputStruct.PSTH.smathvalue{1} = psth_smth;
-outputStruct.PSTH.binWidth = PSTH_binwidth;
-outputStruct.PSTH.smoothingWindow = smoothingWindow;
 
 %ONSET
 if ONSETresponseEndTime_max > ONSETresponseStartTime_min

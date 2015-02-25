@@ -1,7 +1,7 @@
 function summaryAnalysis()
     close all;
     global ANALYSIS_FOLDER, 
-    cellName = '012715Ac1';%012715c1:OFF, c2:ON
+    cellName = '012715Ac2';
     load([ANALYSIS_FOLDER 'analysisTrees' filesep cellName]);%analysisTree is loaded
     tr = analysisTree;
     load([ANALYSIS_FOLDER 'cellData' filesep cellName]);%cellData is loaded
@@ -99,7 +99,7 @@ function summaryAnalysis()
         FH_prv = FH;
         ngph = 1;
         %% plot epoch data and spike timing
-        % plotEpochs( tr, idx(n), cellData, FH_prv );
+        plotEpochs( tr, idx_parent, cellData, FHoffset );
     end
     sname = sprintf('SummaryPlot_%s.pdf',cellName);
     Y = 20.984;X = 29.6774;
