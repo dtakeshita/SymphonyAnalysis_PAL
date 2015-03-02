@@ -8,6 +8,8 @@ function [psth, smoothingWindow_pts]  = smoothPSTH( x, psth, smoothingWindow )
         w = gausswin(smoothingWindow_pts);
         w = w/sum(w);
         psth = conv(psth,w,'same');
+    else
+        smoothingWindow_pts = 0;%no smoothing
     end
 end
 

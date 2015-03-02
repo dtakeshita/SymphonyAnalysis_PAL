@@ -1,4 +1,4 @@
-function [ngph, FH, LH] = tile_graph( dat, para_fig, h_plot, ngph, FHoffset, varargin)
+function [ngph, FH, AH, LH] = tile_graph( dat, para_fig, h_plot, ngph, FHoffset, varargin)
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
     if nargin >= 6
@@ -11,7 +11,11 @@ function [ngph, FH, LH] = tile_graph( dat, para_fig, h_plot, ngph, FHoffset, var
     ngph_fig = nrow*ncol;
     [FH,GH]=get_subplot_id(nrow,ncol,ngph);
     FH = FH + FHoffset;
+    
     figure(FH);
+    if isfield(para_fig, 'fig_prop')
+       set(FH,para_fig.fig_prop);
+    end
     AH = subplot(nrow,ncol,GH);
     %plot
     if isa(h_plot,'function_handle')
@@ -25,6 +29,7 @@ function [ngph, FH, LH] = tile_graph( dat, para_fig, h_plot, ngph, FHoffset, var
         set(LH,dat.legend);
     end
     % formatting
+    %axes and lines
     if isfield(para_fig,'axis_prop')
         axis_prop = para_fig.axis_prop;
     else
@@ -65,12 +70,12 @@ function LH = execute_func(dat, h_func, dat_extra)
                 LH = h_func(dat.x, dat.y);
             else
                 hold on
-                LH = cellfun(@(x,y)plot(x,y),dat.x,dat.y,'UniformOutput',false)
+                LH = cellfun(@(x,y)plot(x,y),dat.x,dat.y,'UniformOutput',false);
             end
         case 'errorbar'
             LH = h_func(dat.x, dat.y, dat.y_error);
         case 'plotEpochData'
             %dat is a structure
-            
+            LH = dat.analysisClass.plotEpochData(dat.currNode,dat.cellData,dat.device,dat.idx);
     end
 end
