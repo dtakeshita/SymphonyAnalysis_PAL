@@ -3,7 +3,7 @@ function [FH, ngph, fig_para, OFFcell]  = plot_responses( cur_node, FHoffset )
 %   Detailed explanation goes here
     fig_para.FHoffset = FHoffset;
     %% plot spike count vs R*
-    fig_para.nrow = 3;
+    fig_para.nrow = 2;
     fig_para.ncol = 3;
     fig_para.nTotalGraphs = 1; 
     

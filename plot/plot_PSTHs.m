@@ -3,6 +3,7 @@ function [FH, ngph, fig_para, OFFcell] = plot_PSTHs( cur_node, FHoffset, AHoffse
 %   Detailed explanation goes here
     fig_para.FHoffset = FHoffset;
     ngph = AHoffset+1;
+    ngph = mod_n(ngph,fig_para.nrow*fig_para.ncol);
     fig_para.line_prop.marker ='none';
     idx_nonzero = cellfun(@(x)any(x>0),cur_node.PSTH.value);
     x = cur_node.PSTH.xvalue(idx_nonzero);
