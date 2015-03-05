@@ -1,4 +1,4 @@
-function summaryAnalysis()
+function cellSummaryPlot()
     close all;
     global ANALYSIS_FOLDER
     save_path = fullfile(ANALYSIS_FOLDER,'SummaryPlots');
