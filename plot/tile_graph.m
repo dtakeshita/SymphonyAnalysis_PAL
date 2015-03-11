@@ -1,4 +1,4 @@
-function [ngph, FH, AH, LH] = tile_graph( dat, para_fig, h_plot, ngph, FHoffset, varargin)
+function [ngph, FH, AH, LH, GH] = tile_graph( dat, para_fig, h_plot, ngph, FHoffset, varargin)
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
     if nargin >= 6
