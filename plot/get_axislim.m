@@ -3,8 +3,12 @@ function [ x_lim, y_lim ] = get_axislim( dat, xscale, yscale)
 %   Detailed explanation goes here
     switch lower(xscale)
         case 'log'
-            x_left = 10^floor(log10(min(dat.x(dat.y>0))));
-            x_right = 10^ceil(log10(max(dat.x(dat.y>0))));
+            x_tmp = dat.x(dat.y>0);
+            if ~strcmpi(yscale,'log') || isempty(x_tmp)
+               x_tmp = dat.x; 
+            end
+            x_left = 10^floor(log10(min(x_tmp)));
+            x_right = 10^ceil(log10(max(x_tmp)));
         case 'linear'%Not done yet
             x_min = min(dat.x); x_max = max(dat.x);
             %% need to take care of negative values
@@ -33,10 +37,16 @@ function [ x_lim, y_lim ] = get_axislim( dat, xscale, yscale)
     x_lim = [x_left x_right];
     switch lower(yscale)
         case 'log'
-            y_btm = 10^floor(log10(min(dat.y(dat.y>0))));
-            y_top = 10^ceil(log10(max(dat.y(dat.y>0))));
+            y_tmp = dat.y(dat.y>0);
+            if ~isempty(y_tmp)
+                y_btm = 10^floor(log10(min(y_tmp)));
+                y_top = 10^ceil(log10(max(y_tmp)));
+            else
+                y_btm = -Inf; y_top = Inf;
+            end
         case 'linear'
             %to be completed-should be same as x case
+            y_btm = -Inf; y_top = Inf;
     end
     y_lim = [y_btm y_top];
     

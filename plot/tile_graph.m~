@@ -43,8 +43,7 @@ function [ngph, FH, AH, LH, GH] = tile_graph( dat, para_fig, h_plot, ngph, FHoff
         line_prop = struct([]);
     end
     if isfield(para_fig,'line_prop_single')
-        set(LH,para_fig.line_prop_single);
-    end
+        set(LH,lline_prop_single
         
     plot_format(axis_prop,line_prop,gcf,AH);%(axisProp,lineProp,FH,AH)
     % Set labels
@@ -71,9 +70,9 @@ end
 
 function LH = eval_string(dat, h_func, dat_extra)
     switch lower(h_func)
-        case 'holdonplot' %to superpose plots on previous graph
+        case 'holdonplot' %to superpose plots on prev. graph
             hold on
-            LH =  plot(dat.x, dat.y);
+            LH =  plot(dat.x, dat.y)
     end
 end
 

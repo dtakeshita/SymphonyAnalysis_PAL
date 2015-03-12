@@ -70,7 +70,6 @@ function acrossCellSummaryPlot()
     end
     %% Do across cell-type analysis here!
     clear fig_para;
-    fig_para.ncol = 3; fig_para.nrow = 2;
-    %plot_across_celltype(spc_perR_max, cellType_unique, fig_para, splitter)??;
+    fig_para.
     
 end
