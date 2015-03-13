@@ -12,7 +12,12 @@ end
     dat.y = cur_node.spikeCount_poststim_baselineSubtracted.mean;
     dat.y_error = cur_node.spikeCount_poststim_baselineSubtracted.SEM;
     %Calculate mean baseline rate
-    baslineRate_all = calc_population_stat(cur_node.baselineRate);
+    baselineRate_all = calc_population_stat(cur_node.baselineRate);
+    baselineRate_fano = baselineRate_all.var/baselineRate_all.mean;
+    str_baselineRate = sprintf('%3.2g(%3.2g)Hz,F:%3.2g',baselineRate_all.mean,...
+        baselineRate_all.SD,baselineRate_fano);
+    ttl_str = fig_para.title.string;
+    fig_para.title.string = sprintf('%s:%s',fig_para.title.string,str_baselineRate);
     %% Determine OFF-cell or not
     [OFFcell, dat.y] = isOffCell( dat.y, celltype_name );
     %% Plots
@@ -30,6 +35,7 @@ end
     [fig_para.axis_prop.xlim, fig_para.axis_prop.ylim]=...
         get_axislim( dat, fig_para.axis_prop.xscale, fig_para.axis_prop.yscale);
     [fig_para.ngph, FH, ~] = tile_graph(dat,fig_para, @errorbar, fig_para.ngph, fig_para.FHoffset);
+    fig_para.title.string = ttl_str;%put back to original string
     ngph = fig_para.ngph;%legacy from the old code     
 end
 

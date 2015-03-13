@@ -12,7 +12,8 @@ end
     dat.y = cur_node.spikeCount_poststim_baselineSubtracted.mean;
     dat.y_error = cur_node.spikeCount_poststim_baselineSubtracted.SEM;
     %Calculate mean baseline rate
-    cur_node.baselineRate.mean;
+    baslineRate_all = calc_population_stat(cur_node.baselineRate);
+    str_baselineRate = sprintf('%3.2g',basel
     %% Determine OFF-cell or not
     [OFFcell, dat.y] = isOffCell( dat.y, celltype_name );
     %% Plots
