@@ -21,6 +21,8 @@ function acrossCellSummaryPlot()
     % for across celltype analysis
     spc_perR_max = cell(n_cellType,1);
     %Set a loop for different stimuli??
+    analysis_class = 'LightStep';
+    stimulus_type = 'LightStep_20';
     for nt = 1:n_cellType
         celltype_name = cellType_unique{nt};
         if isempty(celltype_name)
@@ -29,7 +31,7 @@ function acrossCellSummaryPlot()
         cnames_sametype = cellName_set(cell_idx==nt);
         n_cells_sametype = length(cnames_sametype);
         %Across cell analysis
-        fig_para.annotation.string = celltype_name;
+        fig_para.annotation.string = [stimulus_type,' ',celltype_name];
         fig_para.ngph = 1;
         fig_para.FHoffset = 0;
         %Across cell-type analysis
@@ -43,9 +45,8 @@ function acrossCellSummaryPlot()
             load([ANALYSIS_FOLDER 'cellData' filesep cellName]);%cellData is loaded
             cdat = cellData;
             fig_para.title.string = cellName;
-            analysis_class = 'LightStep';
             %idx = find(tr.treefun(@(x)~isempty(strfind(x.name,analysis_class))));
-            idx = find(tr.treefun(@(x)~isempty(strfind(x.name,'LightStep_20'))));
+            idx = find(tr.treefun(@(x)~isempty(strfind(x.name,stimulus_type))));
             if length(idx) > 1
                 error('There should be only one DataSet with this name!');
             end
@@ -60,7 +61,7 @@ function acrossCellSummaryPlot()
         end
         %store meausred values for across cell-type analysis
         spc_perR_max{nt} = tmp_spc_perR_max
-        sname = sprintf('%s_SummaryPlot.pdf',celltype_name);
+        sname = sprintf('%s_%s_SummaryPlot.pdf',stimulus_type, celltype_name);
         sname(isspace(sname))='_';
         sname = strrep(sname,'-/-','MM');
         sname = strrep(sname,'+/+','PP');
@@ -69,8 +70,17 @@ function acrossCellSummaryPlot()
         save_figs('', sname,save_path,'saveas');
     end
     %% Do across cell-type analysis here!
+    splitter = {'on alpha','off sustained alpha','off transient alpha'};
     clear fig_para;
     fig_para.ncol = 3; fig_para.nrow = 2;
-    %plot_across_celltype(spc_perR_max, cellType_unique, fig_para, splitter)??;
-    
+    fig_para.FHoffset = 0; fig_para.ngph = 1;
+    fig_para.nTotalGraphs = 3;fig_para.annotation.string = stimulus_type;
+    % Plot spike count/R* max vs
+    fig_para.axis_prop.xscale = 'log';fig_para.axis_prop.yscale = 'log';
+    fig_para.xlabel.string = 'R*@max';fig_para.ylabel.string = 'max(SPC/R*)';
+    [FH, fig_para] = plot_across_celltype(spc_perR_max, cellType_unique, fig_para, splitter);
+    %when needed add another with different variables
+    sname = [stimulus_type,'_AcrossCelltypeSummary.pdf'];
+    setFigureSize();
+    save_figs('',sname,save_path,'saveas');
 end

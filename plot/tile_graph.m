@@ -27,8 +27,8 @@ function [ngph, FH, AH, LH, GH] = tile_graph( dat, para_fig, h_plot, ngph, FHoff
     end
     %Set legend
     if isfield(dat,'legend')
-        LH = legend(dat.legend.string);
-        set(LH,dat.legend);
+        leg = legend(dat.legend.string);
+        set(leg,dat.legend);
     end
     % formatting
     %axes and lines
@@ -48,9 +48,13 @@ function [ngph, FH, AH, LH, GH] = tile_graph( dat, para_fig, h_plot, ngph, FHoff
         
     plot_format(axis_prop,line_prop,gcf,AH);%(axisProp,lineProp,FH,AH)
     % Set labels
+    try
     set_label(para_fig, 'xlabel');
     set_label(para_fig, 'ylabel');
     set_label(para_fig, 'title');
+    catch
+        2;
+    end
     
     % set figure title as annotation
     if isfield(para_fig, 'annotation')
@@ -74,11 +78,15 @@ function LH = eval_string(dat, h_func, dat_extra)
         case 'holdonplot' %to superpose plots on previous graph
             hold on
             LH =  plot(dat.x, dat.y);
+        case 'holdonscatter'
+            hold on
+            LH =  plot(dat.x, dat.y);
+            set(LH,'LineStyle','none','Marker','o')
     end
 end
 
 function LH = execute_func(dat, h_func, dat_extra)
-    switch func2str(h_func)
+    switch lower(func2str(h_func))
         case 'plot'
             if ~iscell(dat.x)
                 LH = h_func(dat.x, dat.y);
@@ -88,10 +96,10 @@ function LH = execute_func(dat, h_func, dat_extra)
             end
         case 'errorbar'
             LH = h_func(dat.x, dat.y, dat.y_error);
-        case 'holdOnPlot'
+        case 'holdonplot'
             hold on
             LH =  plot(dat.x, dat.y)
-        case 'plotEpochData'
+        case 'plotepochdata'
             %dat is a structure
             LH = dat.analysisClass.plotEpochData(dat.currNode,dat.cellData,dat.device,dat.idx);
     end
