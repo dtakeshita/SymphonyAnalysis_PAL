@@ -139,15 +139,6 @@ for i=1:L
         
         outputStruct.poststimRate.units = 'Hz';
         outputStruct.poststimRate.type = 'byEpoch';
-%         
-%         outputStruct.stimInterval.units = 's';
-%         outputStruct.stimInterval.type = 'combinedAcrossEpochs';
-%         
-%         outputStruct.prestimInterval.units = 's';
-%         outputStruct.prestimInterval.type = 'combinedAcrossEpochs';
-%         
-%         outputStruct.poststimInterval.units = 's';
-%         outputStruct.poststimInterval.type = 'combinedAcrossEpochs';
         % DT-end
         
         outputStruct.fullISI.units = 's';

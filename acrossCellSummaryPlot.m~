@@ -1,7 +1,7 @@
 function acrossCellSummaryPlot()
     close all;
     %parameters
-    nrow = 3; ncol = 4;
+    nrow = 3; ncol = 6;
     fig_para = v2struct(nrow,ncol);
     global ANALYSIS_FOLDER
     save_path = fullfile(ANALYSIS_FOLDER,'SummaryPlots','AcrossCells');
@@ -20,6 +20,8 @@ function acrossCellSummaryPlot()
     n_cellType = length(cellType_unique);
     % for across celltype analysis
     spc_perR_max = cell(n_cellType,1);
+    FOS_75 = spc_perR_max;
+    FOS_85 = spc_perR_max;
     %Set a loop for different stimuli??
     analysis_class = 'LightStep';
     stimulus_type = 'LightStep_20';
@@ -37,6 +39,8 @@ function acrossCellSummaryPlot()
         %Across cell-type analysis
         %tmp_spc_perR_max = zeros(n_cells_sametype,1);
         tmp_spc_perR_max = struct([]);
+        tmp_FOS_75 = struct([]);
+        tmp_FOS_85 = struct([]);
         for ncell = 1:length(cnames_sametype)
             fig_para.nTotalGraphs = 2*length(cnames_sametype);
             cellName = rm_ext(cnames_sametype{ncell});
@@ -51,16 +55,43 @@ function acrossCellSummaryPlot()
                 error('There should be only one DataSet with this name!');
             end
             %% Analysis over leaves (e.g. response vs R*, etc.) should be done here!
-            cur_parent = tr.Node{idx};
+            cur_tree = tr.subtree(idx);
+            % cur_parent = tr.Node{idx};
+            cur_parent = cur_tree.get(1);
+            %% Spike counts
             [FH, ngph,fig_para] = plot_spikecount( cur_parent, fig_para, celltype_name );
             [FH, ngph,fig_para, ~, max_val] = plot_spikecount_per_R( cur_parent, fig_para, celltype_name );
             tmp_spc_perR_max(ncell).cellname = cellName;
             tmp_spc_perR_max(ncell).x = max_val.x; 
             tmp_spc_perR_max(ncell).y = max_val.y;
-
+            %% FOS
+            param_FOS.n_epoch_min=30;
+            param_FOS.binwidth = 10;%Bin size for spike count histogram (in msec)
+            param_FOS.twindow = 400;%msec
+            cur_tree = calcFOS( cur_tree, param_FOS);%should be done beforehand?
+            [FH, fig_para, th] = plot_FOS(cur_tree.get(1), fig_para);
+            if ~isempty(th)
+                tmp_FOS_75(ncell).y = th.x_75;
+                tmp_FOS_85(ncell).y = th.x_85;
+            else
+                tmp_FOS_75(ncell).y = NaN;
+                tmp_FOS_85(ncell).y = NaN;
+            end
+            tmp_FOS_75(ncell).cellname = cellName;
+            tmp_FOS_85(ncell).cellname = cellName;
+            if ~isempty(strfind(celltype_name,'+/+'))
+                tmp_FOS_75(ncell).x = 1;
+                tmp_FOS_85(ncell).x = 1;
+            else
+                tmp_FOS_75(ncell).x = 2;
+                tmp_FOS_85(ncell).x = 2;
+            end
+                
         end
         %store meausred values for across cell-type analysis
-        spc_perR_max{nt} = tmp_spc_perR_max
+        spc_perR_max{nt} = tmp_spc_perR_max;
+        FOS_75{nt} = tmp_FOS_75;
+        FOS_85{nt} = tmp_FOS_85;
         sname = sprintf('%s_%s_SummaryPlot.pdf',stimulus_type, celltype_name);
         sname(isspace(sname))='_';
         sname = strrep(sname,'-/-','MM');
@@ -72,14 +103,20 @@ function acrossCellSummaryPlot()
     %% Do across cell-type analysis here!
     splitter = {'on alpha','off sustained alpha','off transient alpha'};
     clear fig_para;
-    fig_para.ncol = 3; fig_para.nrow = 2;
+    fig_para.ncol = 3; fig_para.nrow = 3;
     fig_para.FHoffset = 0; fig_para.ngph = 1;
     fig_para.nTotalGraphs = 3;fig_para.annotation.string = stimulus_type;
-    % Plot spike count/R* max vs
+    %% Plot spike count/R* max vs
     fig_para.axis_prop.xscale = 'log';fig_para.axis_prop.yscale = 'log';
     fig_para.xlabel.string = 'R*@max';fig_para.ylabel.string = 'max(SPC/R*)';
     [FH, fig_para] = plot_across_celltype(spc_perR_max, cellType_unique, fig_para, splitter);
-    %when needed add another with different variables
+    %% Plot FOS threshold
+    fig_para.axis_prop.xscale = 'linear';fig_para.axis_prop.yscale = 'log';
+    fig_para.xlabel.string = 'Strain';fig_para.ylabel.string = 'FOS 0.75';
+    [FH, fig_para] = plot_across_celltype(FOS_75, cellType_unique, fig_para, splitter);
+    fig_para.xlabel.string = 'Strain';fig_para.ylabel.string = 'FOS 0.85';
+    [FH, fig_para] = plot_across_celltype(FOS_85, cellType_unique, fig_para, splitter);
+    %% Save across cell summary
     sname = [stimulus_type,'_AcrossCelltypeSummary.pdf'];
     setFigureSize();
     save_figs('',sname,save_path,'saveas');
