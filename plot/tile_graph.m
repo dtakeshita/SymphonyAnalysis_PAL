@@ -82,6 +82,8 @@ function LH = eval_string(dat, h_func, dat_extra)
             hold on
             LH =  plot(dat.x, dat.y);
             set(LH,'LineStyle','none','Marker','o')
+        case 'donothing'
+            LH =[];
     end
 end
 

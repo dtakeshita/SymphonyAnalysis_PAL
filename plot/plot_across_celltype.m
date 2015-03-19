@@ -24,6 +24,7 @@ function [ FH, fig_para ] = plot_across_celltype( dat, celltypeList, fig_para, s
         n_plot = length(dat_plot);
         LHs = zeros(n_plot,1);
         yscale_changed = false;
+        y_mean = zeros(n_plot,1);
         for np=1:n_plot
             try
             tmp_dat.x = [dat_plot{np}.x];%convert structure to array
@@ -46,6 +47,7 @@ function [ FH, fig_para ] = plot_across_celltype( dat, celltypeList, fig_para, s
             end
             [fig_para.ngph, FH, AH, LHs(np)] = tile_graph(tmp_dat,fig_para, 'holdOnScatter', fig_para.ngph, fig_para.FHoffset);
             fig_para.ngph = fig_para.ngph-1;%To superpose plots
+            y_mean(np) = nanmean(tmp_dat.y);%Ignore NaN
         end
         str_legend = cellfun(@(x)x(5:7),celltype_plot,'uniformoutput',false);
         %legend(LHs,celltype_plot)
@@ -54,6 +56,11 @@ function [ FH, fig_para ] = plot_across_celltype( dat, celltypeList, fig_para, s
             fig_para.axis_prop.yscale = yscale_old;%change back to the original axis property
         end
         fig_para.ngph = fig_para.ngph+1;%move on to the next graph
+        y_ratio = y_mean(1:end-1)/y_mean(end);
+        h_ttl = get(gca,'title');
+        str_ttl = sprintf('%s, yratio:%4.2g',h_ttl.String, y_ratio);
+        set(h_ttl,'string',str_ttl);
+        
     end
 end
 

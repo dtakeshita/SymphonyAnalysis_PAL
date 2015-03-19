@@ -1,4 +1,4 @@
-function addRstarMean( epochs, file_name)
+function epochs = addRstarMean( epochs, file_name)
 %Add LED pulse and bakcground voltages to Symphony data (only those with
 %old version)
     %% Test purpose
