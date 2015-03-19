@@ -18,14 +18,17 @@ function [ output_args ] = add2CellData(  )
        catch
            2;
        end
-       for ne = 1:Nepochs
-           tmp = cellData.epochs(ne);
-           addLEDVoltages( tmp );
-           addRstarMean( tmp, cellName );
-           cellData.epochs(ne) = tmp;
-       end
+       cellData.epochs = addLEDVoltages( cellData.epochs );
+       cellData.epochs = addRstarMean( cellData.epochs );
+%        for ne = 1:Nepochs
+%            tmp = cellData.epochs(ne);
+%            addLEDVoltages( tmp );
+%            addRstarMean( tmp, cellName );
+%            cellData.epochs(ne) = tmp;
+%        end
        %Save cell files
-       save(fullfile(data_path, [cellName,'.mat']),'cellData');
+       %save(fullfile(data_path, [cellName,'.mat']),'cellData');
+       saveAndSyncCellData(cellData);
     end
 end
 
