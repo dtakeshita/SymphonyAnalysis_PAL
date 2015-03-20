@@ -9,31 +9,22 @@ function epochs = addLEDVoltages( epochs )
         epochs = cellData.epochs;%epochs is an array of EpochData instances
     end
     %% function main
-    n_epochs = length(epochs);
-    props = checkSameStim(epochs);
-    [Vol_LED, V_back, msg] = getLEDstimparams(props,n_epochs);
-    for n=1:n_epochs
-        epochs(m).attributes('backgroundAmplitude') = V_back;
-        epochs(m).attributes('pulseAmplitude') = Vol_LED(m-idx_st(n)+1);
-        epochs(m).attributes('addedLEDamps') = msg;
-        
+    [idx_st, idx_ed] = divideSingleEpochGroup(epochs);
+    for n=1:length(idx_st)
+        tmp = epochs(idx_st(n):idx_ed(n));
+        props = checkSameStim(tmp);
+        if ~any(strcmp(keys(tmp(1).attributes),'pulseAmplitude'))
+            [Vol_LED, V_back, msg] = getLEDstimparams(props,length(tmp));
+            for m = idx_st(n):idx_ed(n)
+                epochs(m).attributes('backgroundAmplitude') = V_back;
+                epochs(m).attributes('pulseAmplitude') = Vol_LED(m-idx_st(n)+1);
+                epochs(m).attributes('addedLEDamps') = msg;
+            end
+            if ~strcmp(msg,'OK')
+               warning('Epochs %d to %d: %s',idx_st(n),idx_ed(n),msg);
+            end
+        end
     end
-%     [idx_st, idx_ed] = divideSingleEpochGroup(epochs);
-%     for n=1:length(idx_st)
-%         tmp = epochs(idx_st(n):idx_ed(n));
-%         props = checkSameStim(tmp);
-%         if ~any(strcmp(keys(tmp(1).attributes),'pulseAmplitude'))
-%             [Vol_LED, V_back, msg] = getLEDstimparams(props,length(tmp));
-%             for m = idx_st(n):idx_ed(n)
-%                 epochs(m).attributes('backgroundAmplitude') = V_back;
-%                 epochs(m).attributes('pulseAmplitude') = Vol_LED(m-idx_st(n)+1);
-%                 epochs(m).attributes('addedLEDamps') = msg;
-%             end
-%             if ~strcmp(msg,'OK')
-%                warning('Epochs %d to %d: %s',idx_st(n),idx_ed(n),msg);
-%             end
-%         end
-%     end
 end
 
 
@@ -66,15 +57,15 @@ function out = checkSameStim(epochs)
     vals = cell( list_properties);
     for n=1:length(list_properties)
         props = get2(epochs, list_properties{n});
-%         if ~is_allequal(props);
-%             error(['Dividing into epoch groups is not correctly done!'])
-%         else
-        if iscell(props)
-            vals{n} = props{1};
+        if ~is_allequal(props);
+            error(['Dividing into epoch groups is not correctly done!'])
         else
-            vals{n} =  unique(props);
+            if iscell(props)
+                vals{n} = props{1};
+            else
+                vals{n} =  unique(props);
+            end
         end
-%         end
     end
     out = cell2struct(vals, list_properties,2);
 end
