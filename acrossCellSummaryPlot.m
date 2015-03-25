@@ -56,7 +56,13 @@ function acrossCellSummaryPlot()
             end
             %% Analysis over leaves (e.g. response vs R*, etc.) should be done here!
             cur_tree = tr.subtree(idx);
-            % cur_parent = tr.Node{idx};
+            %% Calculate measures
+            %FOS
+            param_FOS.n_epoch_min=30;
+            param_FOS.binwidth = 10;%Bin size for spike count histogram (in msec)
+            param_FOS.twindow = 400;%msec
+            cur_tree = calcFOS( cur_tree, param_FOS);%should be done beforehand?
+            
             cur_parent = cur_tree.get(1);
             %% Spike counts
             [FH, ngph,fig_para] = plot_spikecount( cur_parent, fig_para, celltype_name );
@@ -65,10 +71,6 @@ function acrossCellSummaryPlot()
             tmp_spc_perR_max(ncell).x = max_val.x; 
             tmp_spc_perR_max(ncell).y = max_val.y;
             %% FOS
-            param_FOS.n_epoch_min=30;
-            param_FOS.binwidth = 10;%Bin size for spike count histogram (in msec)
-            param_FOS.twindow = 400;%msec
-            cur_tree = calcFOS( cur_tree, param_FOS);%should be done beforehand?
             [FH, fig_para, th] = plot_FOS(cur_tree.get(1), fig_para);
             if ~isempty(th)
                 tmp_FOS_75(ncell).y = th.x_75;

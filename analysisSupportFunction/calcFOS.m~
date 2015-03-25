@@ -83,8 +83,8 @@ function tr = calcFOS(tr,param)
         %% If one wants to exclude current epoch from the template
         %% need to go gack to mean_spc
         cur_node = tr.get(childID(nc));
-        [~, epoch_idx_in] = setdiff(cur_node.epochID, epochID_out);
-        pre_stim = cur_node.spikeCountHist.value(epoch_idx_in ,idx_pre)-mean_pre_spc;
+        epochID_in = setdiff(cur_node.epochID, epochID_out);
+        pre_stim = cur_node.spikeCountHist.value(epochID_in ,idx_pre)-mean_pre_spc;
         n_epoch = size(pre_stim,1);
         if n_epoch < n_epoch_min
             continue;
