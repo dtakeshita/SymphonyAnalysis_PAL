@@ -27,11 +27,9 @@ end
     fig_para.axis_prop.ylim = [0.5 1];
     %Get number of epochs
     n_epoch_set = unique(cur_node.FOS.Nepoch);
-    if length(n_epoch_set)>1
-        fig_para.title.string = sprintf('%s:N=%d-%d',fig_para.title.string, min(n_epoch_set),max(n_epoch_set));
-    else
-        fig_para.title.string = sprintf('%s:N=%d',fig_para.title.string, n_epoch_set);
-    end
+    if length(n_epoch_set)==1
+        
+    fig_para.title.string = sprintf('%s:N>=%d',fig_para.title.string, min(cur_node.FOS.Nepoch)); 
     [fig_para.ngph, FH, ~] = tile_graph(dat,fig_para, @plot, fig_para.ngph, fig_para.FHoffset);
     
     
