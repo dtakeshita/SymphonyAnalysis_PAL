@@ -75,13 +75,17 @@ function tr = calcFOS(tr,param)
     FOS_corr = NaN*ones(n_child,1);
     FOS_incorr = FOS_corr;
     splitValue = FOS_corr;
+    nEpochSet = FOS_corr;
     for nc = 1:n_child
         %% If one wants to exclude current epoch from the template
         %% need to go gack to mean_spc
         cur_node = tr.get(childID(nc));
         pre_stim = cur_node.spikeCountHist.value(:,idx_pre)-mean_pre_spc;
-        if size(pre_stim,1) < n_epoch_min
+        n_epoch = size(pre_stim,1);
+        if n_epoch < n_epoch_min
             continue;
+        else
+            nEpochSet(nc) = n_epoch;
         end
         post_stim = cur_node.spikeCountHist.value(:,idx_post)-mean_pre_spc;
         dot_pre = pre_stim*template_all';
@@ -92,6 +96,7 @@ function tr = calcFOS(tr,param)
     end
     parent_node.FOS.value = FOS_corr(~isnan(FOS_corr));
     parent_node.FOS.xvalue = splitValue(~isnan(splitValue));
+    parent_node.FOS.Nepoch = nEpochSet(~isnan(nEpochSet));
     parent_node.FOS.param = param;
     tr = tr.set(1, parent_node);
     %plot(parent_node.RstarMean, FOS_corr,'o-')
