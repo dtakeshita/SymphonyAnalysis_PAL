@@ -51,7 +51,11 @@ function out = calc_thresh(x,y,th)
     end
     idx_above = find(y>th,1,'first');
     idx_below = find(y<th,1,'last');
-    out = interp1(y(idx_below:idx_above),x(idx_below:idx_above),th);
+    try
+        out = interp1(y(idx_below:idx_above),x(idx_below:idx_above),th);
+    catch
+        out = NaN;%If interpolation doesn't work, something is wrong anyway.
+    end
     %No interpolation
 %     if all(y>th)
 %         idx = 1;
