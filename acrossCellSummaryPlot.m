@@ -100,6 +100,9 @@ function acrossCellSummaryPlot()
         setFigureSize( );
         save_figs('', sname,save_path,'saveas');
     end
+    %% Save Data temporary
+    
+    
     %% Do across cell-type analysis here!
     splitter = {'on alpha','off sustained alpha','off transient alpha'};
     clear fig_para;
@@ -121,4 +124,6 @@ function acrossCellSummaryPlot()
     sname = [stimulus_type,'_AcrossCelltypeSummary.pdf'];
     setFigureSize();
     save_figs('',sname,save_path,'saveas');
+    
+    
 end

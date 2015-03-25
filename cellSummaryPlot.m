@@ -26,8 +26,20 @@ function cellSummaryPlot()
             %% Analysis over leaves (e.g. response vs R*, etc.) should be done here!
             cur_parent = tr.Node{idx(n)};
             [FH, ngph,fig_para, OFFcell] = plot_responses( cur_parent, FH_prv );
-            [FH, ngph,fig_para, OFFcell] = plot_PSTHs( cur_parent, FH-1, ngph-1, fig_para, OFFcell, 0 ); %no smoothing
-            clear fig_para.axis_prop;
+            %% FOS
+            cur_tree = tr.subtree(idx);
+            param_FOS.n_epoch_min=30;
+            param_FOS.binwidth = 10;%Bin size for spike count histogram (in msec)
+            param_FOS.twindow = 400;%msec
+            cur_tree = calcFOS( cur_tree, param_FOS);%should be done beforehand?
+            fig_para.ngph = ngph;
+            [FH, fig_para, ~] = plot_FOS(cur_tree.get(1), fig_para);
+            
+            %% PSTH
+            fig_para.line_prop_single=[]; 
+            fig_para.axis_prop=[];
+            [FH, ngph,fig_para, OFFcell] = plot_PSTHs( cur_parent, FH-1, ngph, fig_para, OFFcell, 0 ); %no smoothing
+            fig_para.axis_prop = [];
             [FH, ngph,fig_para, OFFcell] = plot_PSTHs( cur_parent, FH-1, ngph-1, fig_para, OFFcell, 50 ); %Smoothing 50ms window (=5 data pts)
             %% Analysis for each leaf (raster, etc.)
             childID = tr.getchildren(idx(n));

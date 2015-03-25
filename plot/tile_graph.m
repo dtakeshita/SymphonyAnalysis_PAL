@@ -43,7 +43,11 @@ function [ngph, FH, AH, LH, GH] = tile_graph( dat, para_fig, h_plot, ngph, FHoff
         line_prop = struct([]);
     end
     if isfield(para_fig,'line_prop_single')
+        try
         set(LH,para_fig.line_prop_single);
+        catch
+            2;
+        end
     end
         
     plot_format(axis_prop,line_prop,gcf,AH);%(axisProp,lineProp,FH,AH)
