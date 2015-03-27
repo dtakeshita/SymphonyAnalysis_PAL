@@ -17,9 +17,12 @@ if ~isfield(fig_para,'nTotalGraphs')
 end
 
 %     ngph_fig = nrow*ncol;
-    dat.x = cur_node.RstarMean;
-    dat.y = cur_node.spikeCount_poststim_baselineSubtracted.mean;
-    %dat.y_error = cur_node.spikeCount_poststim_baselineSubtracted.SEM;
+%     dat.x = cur_node.RstarMean;
+%     dat.y = cur_node.spikeCount_poststim_baselineSubtracted.mean;
+%     %dat.y_error = cur_node.spikeCount_poststim_baselineSubtracted.SEM;
+    dat.x = cur_node.spikecountdiff.xvalue;
+    dat.y = cur_node.spikecountdiff.mean;
+    dat.y_error = cur_node.spikecountdiff.SEM;
     %% For OFF-cells, flip  
     [OFFcell, dat.y] = isOffCell( dat.y, celltype_name );
     %% Plots

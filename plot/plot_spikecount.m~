@@ -18,24 +18,18 @@ end
     else
         dat.y = [];dat.y_error = [];
     end
-    %% Determine OFF-cell or not
-    [OFFcell, dat.y] = isOffCell( dat.y, celltype_name );
-    %% Some data analysis
+    %
     %Calculate mean baseline rate
     baselineRate_all = calc_population_stat(cur_node.baselineRate);
     baselineRate_fano = baselineRate_all.var/baselineRate_all.mean;
     str_baselineRate = sprintf('%3.2g(%3.2g)Hz,F:%3.2g',baselineRate_all.mean,...
         baselineRate_all.SD,baselineRate_fano);
-    %linear regression
-    %Fitting
-    lin_fit = loglog_linfit(dat);
-    %title
-    ttl_str = fig_para.title.string;
-    fig_para.title.string = sprintf('%s:%s,slope:%4.2g',fig_para.title.string,str_baselineRate,lin_fit.slope);
+    %% Determine OFF-cell or not
+    [OFFcell, dat.y] = isOffCell( dat.y, celltype_name );
     %% Plots
     fig_para.xlabel.string = 'Rstar'; 
     fig_para.ylabel.string = 'Spike Count Difference';
-    fig_para.line_prop_single.marker = 'x';
+    fig_para.line_prop_single.marker = 'o';
     %Spike count (Log-log)
     fig_para.axis_prop.xscale = 'log';
     if ~isempty(dat.y(dat.y>0)) %If there is positive data (that's what you expect)
@@ -48,10 +42,13 @@ end
         get_axislim( dat, fig_para.axis_prop.xscale, fig_para.axis_prop.yscale);    
     %[fig_para.ngph, FH, ~] = tile_graph(dat,fig_para, @errorbar, fig_para.ngph, fig_para.FHoffset);
     [fig_para.ngph, FH, ~] = tile_graph(dat,fig_para, @plot, fig_para.ngph, fig_para.FHoffset);
+    %Fitting
+    lin_fit = loglog_linfit(dat);
     fig_para.ngph = fig_para.ngph-1;
-    %plot fitted line
-    fig_para.line_prop_single.marker = 'none';
     [fig_para.ngph, FH, ~] = tile_graph(lin_fit,fig_para, 'holdOnPlot', fig_para.ngph, fig_para.FHoffset);
+    %title
+    ttl_str = fig_para.title.string;
+    fig_para.title.string = sprintf('%s:%s,slope:%4.2g',fig_para.title.string,str_baselineRate,lin_fit.slope);
     %For the next plot
     fig_para.title.string = ttl_str;%put back to original string
     ngph = fig_para.ngph;%legacy from the old code     

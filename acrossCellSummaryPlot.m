@@ -62,7 +62,8 @@ function acrossCellSummaryPlot()
             param_FOS.binwidth = 10;%Bin size for spike count histogram (in msec)
             param_FOS.twindow = 400;%msec
             cur_tree = calcFOS( cur_tree, param_FOS);%should be done beforehand?
-            
+            param_diff.n_epoch_min = 10; param_diff.twindow = 400; %msec
+            cur_tree = calcSpikeCountDiff(cur_tree, param_diff);
             cur_parent = cur_tree.get(1);
             %% Spike counts
             [FH, ngph,fig_para] = plot_spikecount( cur_parent, fig_para, celltype_name );

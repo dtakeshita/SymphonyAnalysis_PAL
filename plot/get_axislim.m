@@ -1,6 +1,11 @@
 function [ x_lim, y_lim ] = get_axislim( dat, xscale, yscale)
 %Calculcate axis limits
 %   Detailed explanation goes here
+    if isempty(dat.x)
+        x_lim = [-Inf Inf];
+        y_lim = [-Inf Inf];
+        return;
+    end
     switch lower(xscale)
         case 'log'
             x_tmp = dat.x(dat.y>0);

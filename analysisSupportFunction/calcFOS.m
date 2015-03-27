@@ -26,7 +26,7 @@ function tr = calcFOS(tr,param)
     for nc = 1:length(childID)
         cur_node = tr.get(childID(nc));
         % Exclude specified epochs
-        [~, epoch_idx_in] = setdiff(cur_node.epochID, epochID_out);
+        epoch_idx_in = getIncludedEpochs( cur_node, epochID_out );
         cur_spc = cur_node.spikeCountHist.value(epoch_idx_in,:);
         n_epoch = size(cur_spc,1);
         if nc==1
@@ -91,7 +91,7 @@ function tr = calcFOS(tr,param)
         else
             nEpochSet(nc) = n_epoch;
         end
-        post_stim = cur_node.spikeCountHist.value(:,idx_post)-mean_pre_spc;
+        post_stim = cur_node.spikeCountHist.value(epoch_idx_in,idx_post)-mean_pre_spc;
         dot_pre = pre_stim*template_all';
         dot_post = post_stim*template_all';
         FOS_corr(nc) = (sum(dot_pre < dot_post) + 0.5*sum(dot_post==dot_pre))/length(dot_pre);
