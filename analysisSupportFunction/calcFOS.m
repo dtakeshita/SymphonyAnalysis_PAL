@@ -6,10 +6,12 @@ function tr = calcFOS(tr,param)
     %construct template
     if nargin==0%test purpose
         global ANALYSIS_FOLDER
-        fname = '032415Ac11.mat';
+        %fname = '032415Ac11.mat';
+        fname = '012715Ac1.mat';
         load(fullfile(ANALYSIS_FOLDER,'analysisTrees',fname));
         tr = analysisTree;
         stimulus_type = 'LightStep_20';
+%         stimulus_type = 'LightStep_5000';
         idx = find(tr.treefun(@(x)~isempty(strfind(x.name,stimulus_type))));
         tr = tr.subtree(idx);
         param.n_epoch_min = 30;%minimum # of trials required
@@ -64,7 +66,8 @@ function tr = calcFOS(tr,param)
     %Note: In spike timings, 0 corresponds to stimuls onset
     %(calculated in getEpochResponses_CA_PAL)
     stim_on = 0;
-    stim_off = parent_node.stimOffset-parent_node.stimOnset;
+    stim_off = parent_node.stimOffset-parent_node.stimOnset;%in sec
+    [idx_pre2, idx_post2] = get_analysis_intervals( xvalue, stim_off, param );
     idx_pre = stim_on-twindow <= xvalue  & xvalue < stim_on;
     idx_post =  stim_off <= xvalue  & xvalue < stim_off+twindow;
     if ~isempty(mean_spc)

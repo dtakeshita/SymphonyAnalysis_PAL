@@ -45,7 +45,11 @@ function [ FH, fig_para ] = plot_across_celltype( dat, celltypeList, fig_para, s
                 [fig_para.axis_prop.yscale, yscale_old] = change_axscale(tmp_dat.y, fig_para.axis_prop.yscale);
                 yscale_changed = true;
             end
-            [fig_para.ngph, FH, AH, LHs(np)] = tile_graph(tmp_dat,fig_para, 'holdOnScatter', fig_para.ngph, fig_para.FHoffset);
+            try
+                [fig_para.ngph, FH, AH, LHs(np)] = tile_graph(tmp_dat,fig_para, 'holdOnScatter', fig_para.ngph, fig_para.FHoffset);
+            catch
+                2;
+            end
             fig_para.ngph = fig_para.ngph-1;%To superpose plots
             y_mean(np) = nanmean(tmp_dat.y);%Ignore NaN
         end
@@ -60,10 +64,23 @@ function [ FH, fig_para ] = plot_across_celltype( dat, celltypeList, fig_para, s
         h_ttl = get(gca,'title');
         str_ttl = sprintf('%s, yratio:%4.2g',h_ttl.String, y_ratio);
         set(h_ttl,'string',str_ttl);
-        
+    end
+    %clear labels, axis & line properties for the next plot
+    clear_props(fig_para,{'axis_prop','line_prop','line_prop_single'});
+end
+
+function p = clear_props(p,f)
+    for nf = 1:length(f)
+        clear_prop(
     end
 end
 
+function p = clear_prop(p,f)
+    if isfield(p.()
+       p = rmfield(p,'axis_prop'); 
+    end
+
+end
 function [scale_new, scale_old] = change_axscale(dat, opt)
     scale_old = opt;
     if strcmp(opt,'log') && (sum(dat<0) > sum(dat>0))

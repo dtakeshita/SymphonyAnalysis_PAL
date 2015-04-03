@@ -25,7 +25,7 @@ function out = loglog_linfit( dat )
     end
     if isempty(dat.x) || isempty(dat.y)
        out.x = [];out.y=[];
-       out.slope = [];
+       out.slope = NaN;
        return;
     end
     %avoid non-positive data

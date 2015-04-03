@@ -14,7 +14,9 @@ end
     fig_para.axis_prop.yscale = 'linear';
     
     if ~isfield(cur_node,'FOS')
-        th = struct([]);
+        %th = struct([]);
+        th.x_75 = NaN;
+        th.x_85 = NaN;
         [fig_para.ngph, FH, ~] = tile_graph(struct([]),fig_para, 'doNothing', fig_para.ngph, fig_para.FHoffset);
         return;
     end

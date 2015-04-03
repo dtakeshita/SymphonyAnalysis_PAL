@@ -1,4 +1,4 @@
-function [FH, ngph, fig_para, OFFcell]  = plot_spikecount( cur_node, fig_para, varargin )
+function [FH, ngph, fig_para, OFFcell, measures]  = plot_spikecount( cur_node, fig_para, varargin )
 if nargin >=3
     celltype_name = varargin{1};
 else
@@ -17,6 +17,8 @@ end
         dat.y_error = cur_node.spikecountdiff.SEM;
     else
         dat.y = [];dat.y_error = [];
+        measures.linfit.slope = NaN;
+        measures.baselineRate_all.mean = NaN;
     end
     %% Determine OFF-cell or not
     [OFFcell, dat.y] = isOffCell( dat.y, celltype_name );
@@ -52,6 +54,8 @@ end
     %plot fitted line
     fig_para.line_prop_single.marker = 'none';
     [fig_para.ngph, FH, ~] = tile_graph(lin_fit,fig_para, 'holdOnPlot', fig_para.ngph, fig_para.FHoffset);
+    %store measured values for output
+    measures = v2struct(lin_fit, baselineRate_all);
     %For the next plot
     fig_para.title.string = ttl_str;%put back to original string
     ngph = fig_para.ngph;%legacy from the old code     
