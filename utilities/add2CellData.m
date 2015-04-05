@@ -14,9 +14,11 @@ function [ output_args ] = add2CellData(  )
            clear Nepochs;
        end
        Nepochs = length(cellData.epochs);
-       cellData.epochs = addLEDVoltages_old( cellData.epochs );
-       cellData.epochs = addRstarMean( cellData.epochs, cellName );      
-       saveAndSyncCellData(cellData);
+       if Nepochs > 0
+           cellData.epochs = addLEDVoltages( cellData.epochs );
+           cellData.epochs = addRstarMean( cellData.epochs, cellName );      
+           saveAndSyncCellData(cellData);
+       end
     end
 end
 

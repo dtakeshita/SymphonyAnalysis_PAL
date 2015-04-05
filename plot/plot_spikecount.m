@@ -33,7 +33,13 @@ end
     lin_fit = loglog_linfit(dat);
     %title
     ttl_str = fig_para.title.string;
-    fig_para.title.string = sprintf('%s:%s,slope:%4.2g',fig_para.title.string,str_baselineRate,lin_fit.slope);
+    if ~isempty(lin_fit)
+        fig_para.title.string = sprintf('%s:%s,slope:%4.2g',fig_para.title.string,str_baselineRate,lin_fit.slope);
+        add_linfit = true;
+    else
+        fig_para.title.string = sprintf('%s:%s',fig_para.title.string,str_baselineRate);
+        add_linfit = false;
+    end
     %% Plots
     fig_para.xlabel.string = 'Rstar'; 
     fig_para.ylabel.string = 'Spike Count Difference';
@@ -52,8 +58,10 @@ end
     [fig_para.ngph, FH, ~] = tile_graph(dat,fig_para, @plot, fig_para.ngph, fig_para.FHoffset);
     fig_para.ngph = fig_para.ngph-1;
     %plot fitted line
-    fig_para.line_prop_single.marker = 'none';
-    [fig_para.ngph, FH, ~] = tile_graph(lin_fit,fig_para, 'holdOnPlot', fig_para.ngph, fig_para.FHoffset);
+    if add_linfit
+        fig_para.line_prop_single.marker = 'none';
+        [fig_para.ngph, FH, ~] = tile_graph(lin_fit,fig_para, 'holdOnPlot', fig_para.ngph, fig_para.FHoffset);
+    end
     %store measured values for output
     measures = v2struct(lin_fit, baselineRate_all);
     %For the next plot

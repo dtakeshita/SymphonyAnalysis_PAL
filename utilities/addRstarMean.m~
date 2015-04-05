@@ -52,7 +52,7 @@ function Cq = getCvalue(V,C,Vq)
     if Vq >= V(1)
         Cq = interp1(V,C,Vq);
     else
-        Cq = C(1)*Vq/V(1);%linearly interpolate btw V(1) & 0
+       Cq = C(1)*Vq/V(1);%linearly interpolate btw V(1) & 0
     end
 end
 

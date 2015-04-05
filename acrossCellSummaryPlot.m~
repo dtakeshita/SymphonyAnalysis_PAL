@@ -36,9 +36,6 @@ function acrossCellSummaryPlot()
         end
         cnames_sametype = cellName_set(cell_idx==nt);
         n_cells_sametype = length(cnames_sametype);
-%         if n_cells_sametype==0
-%             continue;
-%         end
         fig_para = param_tilefigs();
         %Across cell analysis
         fig_para.annotation.string = [stimulus_type,' ',celltype_name];
@@ -49,7 +46,7 @@ function acrossCellSummaryPlot()
         tmp_FOS_75 = struct([]);
         tmp_FOS_85 = struct([]);
         tmp_baseFR = struct([]);
-        ncell_nonempty = 1;
+        cell_idx = 1;
         for ncell = 1:length(cnames_sametype)
             fig_para.nTotalGraphs = 2*length(cnames_sametype);
             cellName = rm_ext(cnames_sametype{ncell});
@@ -82,28 +79,28 @@ function acrossCellSummaryPlot()
             %% Spike counts
             [FH, ngph,fig_para,~, spc_measures] = plot_spikecount( cur_parent, fig_para, celltype_name );
             %slope in log-log plot
-            tmp_spc_slope(ncell_nonempty ).cellname = cellName;
-            tmp_spc_slope(ncell_nonempty ).x = classify_names(celltype_name,splitter_strain);
-            tmp_spc_slope(ncell_nonempty ).y = spc_measures.lin_fit.slope;
+            tmp_spc_slope(cell_idx ).cellname = cellName;
+            tmp_spc_slope(cell_idx ).x = classify_names(celltype_name,splitter_strain);
+            tmp_spc_slope(cell_idx ).y = spc_measures.lin_fit.slope;
             %baseline FR
-            tmp_baseFR(ncell_nonempty ).cellname = cellName;
-            tmp_baseFR(ncell_nonempty ).x = classify_names(celltype_name,splitter_strain);
-            tmp_baseFR(ncell_nonempty ).y = spc_measures.baselineRate_all.mean;
+            tmp_baseFR(cell_idx ).cellname = cellName;
+            tmp_baseFR(cell_idx ).x = classify_names(celltype_name,splitter_strain);
+            tmp_baseFR(cell_idx ).y = spc_measures.baselineRate_all.mean;
             
             [FH, ngph,fig_para, ~, max_val] = plot_spikecount_per_R( cur_parent, fig_para, celltype_name );
-            tmp_spc_perR_max(ncell_nonempty ).cellname = cellName;
-            tmp_spc_perR_max(ncell_nonempty ).x = max_val.x; 
-            tmp_spc_perR_max(ncell_nonempty ).y = max_val.y;
+            tmp_spc_perR_max(cell_idx ).cellname = cellName;
+            tmp_spc_perR_max(cell_idx ).x = max_val.x; 
+            tmp_spc_perR_max(cell_idx ).y = max_val.y;
             %% FOS
             [FH, fig_para, th] = plot_FOS(cur_tree.get(1), fig_para);
-            tmp_FOS_75(ncell_nonempty ).cellname = cellName;
-            tmp_FOS_75(ncell_nonempty ).y = th.x_75;
-            tmp_FOS_75(ncell_nonempty ).x = classify_names(celltype_name,splitter_strain);
+            tmp_FOS_75(cell_idx ).cellname = cellName;
+            tmp_FOS_75(cell_idx ).y = th.x_75;
+            tmp_FOS_75(cell_idx ).x = classify_names(celltype_name,splitter_strain);
             
-            tmp_FOS_85(ncell_nonempty ).cellname = cellName;
-            tmp_FOS_85(ncell_nonempty ).y = th.x_85;
-            tmp_FOS_85(ncell_nonempty ).x = classify_names(celltype_name,splitter_strain);
-            ncell_nonempty = ncell_nonempty +1;
+            tmp_FOS_85(cell_idx ).cellname = cellName;
+            tmp_FOS_85(cell_idx ).y = th.x_85;
+            tmp_FOS_85(cell_idx ).x = classify_names(celltype_name,splitter_strain);
+            cell_idx = cell_idx +1;
         end
         %store meausred values for across cell-type analysis
         spc_perR_max{nt} = tmp_spc_perR_max;

@@ -10,11 +10,11 @@ function tr = calcFOS(tr,param)
         fname = '012715Ac1.mat';
         load(fullfile(ANALYSIS_FOLDER,'analysisTrees',fname));
         tr = analysisTree;
-        stimulus_type = 'LightStep_20';
-%         stimulus_type = 'LightStep_5000';
+%         stimulus_type = 'LightStep_20';
+        stimulus_type = 'LightStep_5000';
         idx = find(tr.treefun(@(x)~isempty(strfind(x.name,stimulus_type))));
         tr = tr.subtree(idx);
-        param.n_epoch_min = 30;%minimum # of trials required
+        param.n_epoch_min = 5;%minimum # of trials required
         param.binwidth = 10;%Bin size for spike count histogram (in msec)
         param.twindow = 400;%msec
     end
@@ -59,7 +59,6 @@ function tr = calcFOS(tr,param)
     tr = tr.set(1, cur_node);
     
     %% Get template & go through each node to calculate inner product
-    twindow = twindow/1000;%convert from msec to sec
     parent_node = tr.get(1);
     xvalue = parent_node.meanSpikeCountHist.xvalue;
     mean_spc = parent_node.meanSpikeCountHist.value;  
@@ -67,9 +66,10 @@ function tr = calcFOS(tr,param)
     %(calculated in getEpochResponses_CA_PAL)
     stim_on = 0;
     stim_off = parent_node.stimOffset-parent_node.stimOnset;%in sec
-    [idx_pre2, idx_post2] = get_analysis_intervals( xvalue, stim_off, param );
-    idx_pre = stim_on-twindow <= xvalue  & xvalue < stim_on;
-    idx_post =  stim_off <= xvalue  & xvalue < stim_off+twindow;
+    [idx_pre, idx_post] = get_analysis_intervals( xvalue, stim_off, param );
+%     twindow = twindow/1000;%convert from msec to sec
+%     idx_pre = stim_on-twindow <= xvalue  & xvalue < stim_on;
+%     idx_post =  stim_off <= xvalue  & xvalue < stim_off+twindow;
     if ~isempty(mean_spc)
         template_all = mean_spc(idx_post)-mean_spc(idx_pre);
     else

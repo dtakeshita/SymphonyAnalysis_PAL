@@ -42,8 +42,12 @@ function [ FH, fig_para ] = plot_across_celltype( dat, celltypeList, fig_para, s
             fig_para.title.string = celltypeName;
             %Temp hack-avoid log scale if thare are too many negative numbers
             if isfield(fig_para.axis_prop,'yscale')
+                try
                 [fig_para.axis_prop.yscale, yscale_old] = change_axscale(tmp_dat.y, fig_para.axis_prop.yscale);
                 yscale_changed = true;
+                catch
+                    2;
+                end
             end
             try
                 [fig_para.ngph, FH, AH, LHs(np)] = tile_graph(tmp_dat,fig_para, 'holdOnScatter', fig_para.ngph, fig_para.FHoffset);
@@ -71,13 +75,13 @@ end
 
 function p = clear_props(p,f)
     for nf = 1:length(f)
-        clear_prop(
+        clear_prop(p,f{nf});
     end
 end
 
 function p = clear_prop(p,f)
-    if isfield(p.()
-       p = rmfield(p,'axis_prop'); 
+    if isfield(p,f)
+       p = rmfield(p,f); 
     end
 
 end

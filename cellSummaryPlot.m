@@ -19,8 +19,9 @@ function cellSummaryPlot()
         load([ANALYSIS_FOLDER 'cellData' filesep cellName]);%cellData is loaded
         cdat = cellData;
         analysis_class = 'LightStep';
+        stimulus_type = 'LightStep_5000';
         %idx = find(tr.treefun(@(x)~isempty(strfind(x.name,analysis_class))));
-        idx = find(tr.treefun(@(x)~isempty(strfind(x.name,'LightStep_20'))));
+        idx = find(tr.treefun(@(x)~isempty(strfind(x.name,stimulus_type))));
         FH_prv = 0;
         for n=1:length(idx)
             %% Analysis over leaves (e.g. response vs R*, etc.) should be done here!
@@ -28,7 +29,7 @@ function cellSummaryPlot()
             [FH, ngph,fig_para, OFFcell] = plot_responses( cur_parent, FH_prv );
             %% FOS
             cur_tree = tr.subtree(idx);
-            param_FOS.n_epoch_min=30;
+            param_FOS.n_epoch_min=5;
             param_FOS.binwidth = 10;%Bin size for spike count histogram (in msec)
             param_FOS.twindow = 400;%msec
             cur_tree = calcFOS( cur_tree, param_FOS);%should be done beforehand?
@@ -127,7 +128,8 @@ function cellSummaryPlot()
             epochs_para.max_ngrph_per_node = 15;epochs_para.fig_prop.Visible = 'off';
             plotEpochs( tr, idx(n), cellData, FH_prv, epochs_para );
         end
-        sname = sprintf('SummaryPlot_%s.pdf',cellName);
+        %sname = sprintf('SummaryPlot_%s.pdf',cellName);
+        sname = sprintf('%s_%s.pdf',stimulus_type, cellName);
         Y = 20.984;X = 29.6774;
         xMargin = 1;               %# left/right margins from page borders
         yMargin = 1;               %# bottom/top margins from page borders

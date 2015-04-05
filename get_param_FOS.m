@@ -12,6 +12,6 @@ function param = get_param_FOS( stimulus_name )
             twindow = 1000;
             
     end
-
+    param = v2struct(n_epoch_min,binwidth,twindow);
 end
 

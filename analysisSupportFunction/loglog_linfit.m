@@ -45,7 +45,12 @@ function out = loglog_linfit( dat )
     [~,idx_max] = max(slopes);
     ndat = length(slopes);
     %% So far, obtain 3 consecutive points of largest slope
-    if idx_max==1
+    if ndat==0
+        out = return_nan();
+        return;
+    elseif ndat==1
+        idx = 1:2;
+    elseif idx_max==1
         idx = 1:3;
     elseif idx_max == ndat
         idx = ndat-1:ndat+1;
@@ -66,8 +71,11 @@ function out = loglog_linfit( dat )
     catch
         2;
     end
-    %% Note one could trim points here (finish trim_points below)
+    try
     p = polyfit(X0,Y0,1);
+    catch
+        2;
+    end
     Yfit = p(1)*X0 + p(2);
     out.x = 10.^X0; out.y = 10.^Yfit;
     out.slope = p(1);
@@ -76,6 +84,10 @@ function out = loglog_linfit( dat )
 %     plot(X,Y,'o')
 %     hold on
 %     plot(X0, Yfit,'k')
+end
+
+function out = return_nan()
+    out.x = NaN;out.y = NaN;out.slope=NaN;
 end
 
 function [Xnew, Ynew]=trim_points(X,Y)%Finish this!!
