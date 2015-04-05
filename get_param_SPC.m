@@ -10,6 +10,6 @@ function param = get_param_SPC( stimulus_name )
             twindow = 1000; %msec
             
     end
-
+    param = v2struct(n_epoch_min, twindow);
 end
 

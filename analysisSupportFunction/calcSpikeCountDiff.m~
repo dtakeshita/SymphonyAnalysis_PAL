@@ -31,11 +31,10 @@ function tr = calcSpikeCountDiff(tr,param)
     %(calculated in getEpochResponses_CA_PAL)
     stim_on = 0;
     stim_off = parent_node.stimOffset-parent_node.stimOnset;
-    [idx_pre, idx_post, param] = get_analysis_intervals( xvalue, stim_off, param );
-    
-%     twindow = twindow/1000;%convert from msec to sec
-%     idx_pre = stim_on-twindow <= xvalue  & xvalue < stim_on;
-%     idx_post =  stim_off <= xvalue  & xvalue < stim_off+twindow;
+    [idx_pre, idx_post] = get_analysis_intervals( xvalue, stim_off, param );
+    twindow = twindow/1000;%convert from msec to sec
+    idx_pre = stim_on-twindow <= xvalue  & xvalue < stim_on;
+    idx_post =  stim_off <= xvalue  & xvalue < stim_off+twindow;
     %mean_pre_spc = mean(mean_spc(idx_pre));%mean pre firing rate
     childID = tr.getchildren(1);
     n_child = length(childID);

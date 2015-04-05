@@ -1,4 +1,4 @@
-function [ idx_pre, idx_post, para_out] = get_analysis_intervals( xvalue, stim_duration, param )
+function [ idx_pre, idx_post, param] = get_analysis_intervals( xvalue, stim_duration, param )
 %calculate indices for pre & post time intervals for analysis
 %xvalue:time vector (sec), stim_duration: stimulus duration (sec)
 %param:parameters. twindow:length of time window (msec),
@@ -35,7 +35,7 @@ function [ idx_pre, idx_post, para_out] = get_analysis_intervals( xvalue, stim_d
     end
     idx_pre =   t_st_pre <= xvalue  & xvalue < t_st_pre + twindow;
     idx_post =  t_st_post <= xvalue  & xvalue < t_st_post + twindow;
-    para_out.interval_pre = [t_st_pre t_st_pre + twindow];
-    para_out.interval_post = [t_st_post t_st_post + twindow];
+    param.interval_pre = [t_st_pre t_st_pre + twindow];
+    param.interval_post = [t_st_post t_st_post + twindow];
 end
 

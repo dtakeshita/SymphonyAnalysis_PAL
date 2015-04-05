@@ -68,15 +68,14 @@ function acrossCellSummaryPlot()
             %% Analysis over leaves (e.g. response vs R*, etc.) should be done here!
             cur_tree = tr.subtree(idx);
             %% Calculate measures
+            twindow_offset_post = 1000;
             %FOS
             param_FOS = get_param_FOS(stimulus_type);
-            try
+            param_FOS.twindow_offset_post=twindow_offset_post;
             cur_tree = calcFOS( cur_tree, param_FOS);%should be done beforehand?
-            catch
-                2;
-            end
             %spike count difference
-            param_diff.n_epoch_min = 5; param_diff.twindow = 1000; %msec
+            param_diff = get_param_SPC(stimulus_type);
+            param_diff.twindow_offset_post=twindow_offset_post;
             cur_tree = calcSpikeCountDiff(cur_tree, param_diff);
             cur_parent = cur_tree.get(1);
             %% Spike counts

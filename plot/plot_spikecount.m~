@@ -41,7 +41,7 @@ end
         fig_para.title.string = sprintf('%s:%s,%s,slope:%4.2g',fig_para.title.string,str_baselineRate,str_intvl,lin_fit.slope);
         add_linfit = true;
     else
-        fig_para.title.string = sprintf('%s:%s,%s',fig_para.title.string,str_baselineRate,str_intvl );
+        fig_para.title.string = sprintf('%s:%s,%s',fig_para.title.string,str_baselineRate);
         add_linfit = false;
     end
     %% Plots
