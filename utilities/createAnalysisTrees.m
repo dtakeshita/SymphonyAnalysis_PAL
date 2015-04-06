@@ -1,6 +1,7 @@
 function createAnalysisTrees()
 %Create data sets based on the duration of light step.
-%WARNING: So far, it assumes every epoch 
+%WARNING: This doesn't seem to be compatible with TreeBrowserGUI-FIX
+%THIS!!!
 %   Detailed explanation goes here
     global ANALYSIS_FOLDER
     cellName_set = uigetfile([ANALYSIS_FOLDER,'cellData' filesep],'MultiSelect','on');

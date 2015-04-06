@@ -10,6 +10,7 @@ end
     %% Plots
     fig_para.xlabel.string = 'Rstar'; 
     fig_para.ylabel.string = 'Pcorrect';
+    %fig_para.axis_prop.xscale = 'linear';
     fig_para.axis_prop.xscale = 'log';
     fig_para.axis_prop.yscale = 'linear';
     

@@ -7,7 +7,8 @@ function tr = calcFOS(tr,param)
     if nargin==0%test purpose
         global ANALYSIS_FOLDER
         %fname = '032415Ac11.mat';
-        fname = '012715Ac1.mat';
+        %fname = '012715Ac1.mat';%OFF-S w/ LightStep_5000
+        fname = '030315Ac15.mat';%OFF-S w/ LightStep_5000
         load(fullfile(ANALYSIS_FOLDER,'analysisTrees',fname));
         tr = analysisTree;
 %         stimulus_type = 'LightStep_20';
@@ -15,8 +16,10 @@ function tr = calcFOS(tr,param)
         idx = find(tr.treefun(@(x)~isempty(strfind(x.name,stimulus_type))));
         tr = tr.subtree(idx);
         param.n_epoch_min = 5;%minimum # of trials required
-        param.binwidth = 10;%Bin size for spike count histogram (in msec)
-        param.twindow = 400;%msec
+        param.binwidth = 100;%Bin size for spike count histogram (in msec)
+        param.twindow = 1000;%msec
+        param.twindow_offset_post = 1000;
+        
     end
     v2struct(param);
     tr = addSpikeCountHist(tr,param.binwidth);%calculate spike count histogramspc
@@ -66,7 +69,7 @@ function tr = calcFOS(tr,param)
     %(calculated in getEpochResponses_CA_PAL)
     stim_on = 0;
     stim_off = parent_node.stimOffset-parent_node.stimOnset;%in sec
-    [idx_pre, idx_post] = get_analysis_intervals( xvalue, stim_off, param );
+    [idx_pre, idx_post, param] = get_analysis_intervals( xvalue, stim_off, param );
 %     twindow = twindow/1000;%convert from msec to sec
 %     idx_pre = stim_on-twindow <= xvalue  & xvalue < stim_on;
 %     idx_post =  stim_off <= xvalue  & xvalue < stim_off+twindow;
@@ -100,12 +103,26 @@ function tr = calcFOS(tr,param)
         FOS_corr(nc) = (sum(dot_pre < dot_post) + 0.5*sum(dot_post==dot_pre))/length(dot_pre);
         FOS_incorr(nc) =  (sum(dot_pre > dot_post) + 0.5*sum(dot_post==dot_pre))/length(dot_post);
         splitValue(nc) = cur_node.splitValue;
+        %For test purpose
+        if nargin==0
+            resp_mean = mean(cur_node.spikeCountHist.value(epoch_idx_in ,:),1);
+            clf;
+            plot(cur_node.spikeCountHist.xvalue, resp_mean)
+            hold on
+            plot(mean(pre_stim,1),'k')
+            plot(mean(post_stim,1),'r')
+            str_ttl = sprintf('R*=%g, FOS=%g',cur_node.splitValue, FOS_corr(nc));
+            title(str_ttl)
+        end
     end
     parent_node.FOS.value = FOS_corr(~isnan(FOS_corr));
     parent_node.FOS.xvalue = splitValue(~isnan(splitValue));
     parent_node.FOS.Nepoch = nEpochSet(~isnan(nEpochSet));
     parent_node.FOS.param = param;
     tr = tr.set(1, parent_node);
-    %plot(parent_node.RstarMean, FOS_corr,'o-')
+    if nargin == 0
+        figure;
+        plot(parent_node.RstarMean, FOS_corr,'o-')
+    end
 end
 

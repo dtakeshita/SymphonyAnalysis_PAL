@@ -8,7 +8,7 @@ function param = get_param_FOS( stimulus_name )
             twindow = 400;
         case 'LightStep_5000'
             n_epoch_min=5;
-            binwidth = 10;
+            binwidth = 50;
             twindow = 1000;
             
     end
