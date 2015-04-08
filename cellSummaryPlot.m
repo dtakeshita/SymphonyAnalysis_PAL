@@ -19,7 +19,8 @@ function cellSummaryPlot()
         load([ANALYSIS_FOLDER 'cellData' filesep cellName]);%cellData is loaded
         cdat = cellData;
         analysis_class = 'LightStep';
-        stimulus_type = 'LightStep_20';
+        %stimulus_type = 'LightStep_20';
+        stimulus_type = 'LightStep_5000';
         %idx = find(tr.treefun(@(x)~isempty(strfind(x.name,analysis_class))));
         idx = find(tr.treefun(@(x)~isempty(strfind(x.name,stimulus_type))));
         FH_prv = 0;
@@ -52,7 +53,7 @@ function cellSummaryPlot()
             ngph_fig = nrow*ncol;
             nTotalGraphs = n_child;
             ngph = 1;
-            ann_txt = tr.Node{idx(n)}.name;
+            ann_txt = [cdat.cellType,' ', tr.Node{idx(n)}.name];
             for nc = 1:n_child
                 cur_node = tr.Node{childID(nc)};
                 [FH,GH]=get_subplot_id(nrow,ncol,ngph);
@@ -67,6 +68,9 @@ function cellSummaryPlot()
                     [cur_node.recordingOnset.value cur_node.recordingOffset.value],...
                     'FigHandle',FH);
                 title(cur_node.name);
+                if strcmp(stimulus_type, 'LightStep_5000')
+                   set(gca,'xlim',[-1.0 1.0]); 
+                end
                 ngph = enlargeFigure(ngph, ngph_fig, nTotalGraphs,FH,ann_txt);
             end
             %% Reset counters for a new set of graphs

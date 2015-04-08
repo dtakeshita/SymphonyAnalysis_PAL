@@ -9,7 +9,7 @@ function param = get_param_FOS( stimulus_name )
         case 'LightStep_5000'
             n_epoch_min=5;
             binwidth = 50;
-            twindow = 1000;
+            twindow = 4000;
             
     end
     param = v2struct(n_epoch_min,binwidth,twindow);

@@ -7,7 +7,7 @@ function param = get_param_SPC( stimulus_name )
             twindow = 400;
         case 'LightStep_5000'
             n_epoch_min=5;
-            twindow = 1000; %msec
+            twindow = 4000; %msec
             
     end
     param = v2struct(n_epoch_min, twindow);

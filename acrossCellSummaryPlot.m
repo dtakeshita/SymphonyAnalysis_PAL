@@ -26,8 +26,8 @@ function acrossCellSummaryPlot()
     base_FR = spc_perR_max;
     %Set a loop for different stimuli??
     analysis_class = 'LightStep';
-    stimulus_type = 'LightStep_20';
-    %stimulus_type = 'LightStep_5000';
+%     stimulus_type = 'LightStep_20';
+    stimulus_type = 'LightStep_5000';
     splitter_strain = {'+/+','-/-'};
     for nt = 1:n_cellType
         celltype_name = cellType_unique{nt};
@@ -68,7 +68,7 @@ function acrossCellSummaryPlot()
             %% Analysis over leaves (e.g. response vs R*, etc.) should be done here!
             cur_tree = tr.subtree(idx);
             %% Calculate measures
-            twindow_offset_post = 0;
+            twindow_offset_post = 1000;
             %FOS
             param_FOS = get_param_FOS(stimulus_type);
             param_FOS.twindow_offset_post=twindow_offset_post;
