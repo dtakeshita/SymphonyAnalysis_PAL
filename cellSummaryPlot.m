@@ -19,8 +19,8 @@ function cellSummaryPlot()
         load([ANALYSIS_FOLDER 'cellData' filesep cellName]);%cellData is loaded
         cdat = cellData;
         analysis_class = 'LightStep';
-        %stimulus_type = 'LightStep_20';
-        stimulus_type = 'LightStep_5000';
+        stimulus_type = 'LightStep_20';
+        %stimulus_type = 'LightStep_5000';
         %idx = find(tr.treefun(@(x)~isempty(strfind(x.name,analysis_class))));
         idx = find(tr.treefun(@(x)~isempty(strfind(x.name,stimulus_type))));
         FH_prv = 0;
