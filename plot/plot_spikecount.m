@@ -4,6 +4,11 @@ if nargin >=3
 else
     celltype_name = '';
 end
+if nargin >=4
+    stim_type = varargin{2};
+else
+    stim_type = '';
+end
 if ~isfield(fig_para,'nTotalGraphs')
     fig_para.nTotalGraphs = Inf;
 end
@@ -48,12 +53,18 @@ end
     fig_para.xlabel.string = 'Rstar'; 
     fig_para.ylabel.string = 'Spike Count Difference';
     fig_para.line_prop_single.marker = 'x';
-    %Spike count (Log-log)
-    fig_para.axis_prop.xscale = 'log';
-    if ~isempty(dat.y(dat.y>0)) %If there is positive data (that's what you expect)
-        fig_para.axis_prop.yscale = 'log';
-    else %OFF-T may give negative spikes count difference due to rebound
-        fig_para.axis_prop.yscale = 'linear';
+    %Spike count 
+    if ~isfield(fig_para.axis_prop,'yscale')||isempty(fig_para.axis_prop) 
+        fig_para.axis_prop.xscale = 'log';
+    end
+    
+    %Y-axis scale-if it's not specified, chosen below
+    if ~isfield(fig_para.axis_prop,'yscale')||isempty(fig_para.axis_prop) 
+        if ~isempty(dat.y(dat.y>0)) %If there is positive data (that's what you expect)
+            fig_para.axis_prop.yscale = 'log';
+        else %OFF-T may give negative spikes count difference due to rebound
+            fig_para.axis_prop.yscale = 'linear';
+        end
     end
     %fig_para.title.string = 'Log-log';
     [fig_para.axis_prop.xlim, fig_para.axis_prop.ylim]=...
@@ -66,6 +77,8 @@ end
         fig_para.line_prop_single.marker = 'none';
         [fig_para.ngph, FH, ~] = tile_graph(lin_fit,fig_para, 'holdOnPlot', fig_para.ngph, fig_para.FHoffset);
     end
+    %% Only for 
+    
     %store measured values for output
     measures = v2struct(lin_fit, baselineRate_all);
     %For the next plot
