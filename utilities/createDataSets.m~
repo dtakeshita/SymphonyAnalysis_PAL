@@ -9,7 +9,7 @@ function createDataSets()
     
     filter_cond = {{'preTime',500, 'stimTime',20, 'tailTime', 500};%500ms step
                    {'preTime',500, 'stimTime',500, 'tailTime', 500};%Flash
-                    {'preTime',5000,'stimTime',5000}};%Background step
+                    {'preTime',5000,'stimTime',5000,''}};%Background step
     n_filter = size(filter_cond,1);
     cellName_set = uigetfile([ANALYSIS_FOLDER,'cellData' filesep],'MultiSelect','on');
     if ~iscell(cellName_set)
@@ -35,9 +35,9 @@ function createDataSets()
             idx = cellData.filterEpochs(filter_str);
             if ~isempty(idx)
                 %saveName = sprintf('%s_%d',analysis_class, filter_cond{2*nf});
-                stimTime_idx = find(strcmp(filter_cond{nf},'stimTime'));
+                stimTime_idx = 
                 saveName = sprintf('%s_%d',analysis_class,...
-                    filter_cond{nf}{stimTime_idx+1});%stimTime is used
+                    filter_cond{nf}{find(strcmp(filter_cond{nf},'stimTime'))+1});%stimTime is used
                 cellData.savedDataSets(saveName) = idx;
             end
         end
