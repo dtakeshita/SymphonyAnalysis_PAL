@@ -55,7 +55,8 @@ function [ FH, fig_para ] = plot_across_celltype( dat, celltypeList, fig_para, s
                 2;
             end
             fig_para.ngph = fig_para.ngph-1;%To superpose plots
-            y_mean(np) = nanmean(tmp_dat.y);%Ignore NaN
+            %y_mean(np) = nanmean(tmp_dat.y);%Ignore NaN
+            y_mean(np) = geomean(tmp_dat.y(~isnan(tmp_dat.y)));
         end
         str_legend = cellfun(@(x)x(5:7),celltype_plot,'uniformoutput',false);
         %legend(LHs,celltype_plot)

@@ -54,12 +54,12 @@ end
     fig_para.ylabel.string = 'Spike Count Difference';
     fig_para.line_prop_single.marker = 'x';
     %Spike count 
-    if ~isfield(fig_para.axis_prop,'yscale')||isempty(fig_para.axis_prop) 
+    if  ~isfield(fig_para,'axis_prop')||~isfield(fig_para.axis_prop,'yscale')||isempty(fig_para.axis_prop) 
         fig_para.axis_prop.xscale = 'log';
     end
     
     %Y-axis scale-if it's not specified, chosen below
-    if ~isfield(fig_para.axis_prop,'yscale')||isempty(fig_para.axis_prop) 
+    if ~isfield(fig_para,'axis_prop')||~isfield(fig_para.axis_prop,'yscale')||isempty(fig_para.axis_prop) 
         if ~isempty(dat.y(dat.y>0)) %If there is positive data (that's what you expect)
             fig_para.axis_prop.yscale = 'log';
         else %OFF-T may give negative spikes count difference due to rebound
