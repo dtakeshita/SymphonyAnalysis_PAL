@@ -7,8 +7,8 @@ function createDataSets()
     %filter_cond = {'stimTime',20, 'stimTime',500, 'stimTime',5000};
     %n_filter = length(filter_cond)/2;
     
-    filter_cond = {{'preTime',500, 'stimTime',20, 'tailTime', 500};%500ms step
-                   {'preTime',500, 'stimTime',500, 'tailTime', 500};%Flash
+    filter_cond = {{'preTime',500, 'stimTime',20, 'tailTime', 500};%Flash
+                   {'preTime',500, 'stimTime',500};%500ms step
                     {'preTime',5000,'stimTime',5000}};%Background step
     n_filter = size(filter_cond,1);
     cellName_set = uigetfile([ANALYSIS_FOLDER,'cellData' filesep],'MultiSelect','on');
