@@ -5,7 +5,8 @@ function acrossCellSummaryPlot_step5000()
 %     fig_para = v2struct(nrow,ncol);
     global ANALYSIS_FOLDER
     save_path = fullfile(ANALYSIS_FOLDER,'SummaryPlots','AcrossCells');
-    cellName_set = uigetfile([ANALYSIS_FOLDER,'analysisTrees' filesep],'MultiSelect','on');
+    %cellName_set = uigetfile([ANALYSIS_FOLDER,'analysisTrees' filesep],'MultiSelect','on');
+    cellName_set = {'022415Ac4'};%test purpose
     if ~iscell(cellName_set)
        cellName_set = {cellName_set}; 
     end

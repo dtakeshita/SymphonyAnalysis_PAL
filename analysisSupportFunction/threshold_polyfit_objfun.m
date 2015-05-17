@@ -8,8 +8,6 @@ elseif length(param)==3
     a=param(1);theta=param(2);n=param(3);
     yfit(x>theta) = a*(x(x>theta)-theta).^n;
 end
-
-
 %% Calculate RMS error
 e = norm(y-yfit);
 

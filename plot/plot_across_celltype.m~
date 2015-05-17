@@ -75,11 +75,7 @@ function [ FH, fig_para ] = plot_across_celltype( dat, celltypeList, fig_para, s
         fig_para.ngph = fig_para.ngph+1;%move on to the next graph
         y_ratio = y_mean(1:end-1)/y_mean(end);
         h_ttl = get(gca,'title');
-        if strcmp(mean_opt,'arithmaticmean')
-            str_ttl = sprintf('%s, yratio:%4.2g',h_ttl.String, y_ratio);
-        elseif strcmp(mean_opt,'geometricmean')
-            str_ttl = sprintf('%s,yratio(geomean):%4.2g',h_ttl.String, y_ratio);
-        end
+        str_ttl = sprintf('%s, yratio:%4.2g',h_ttl.String, y_ratio);
         set(h_ttl,'string',str_ttl);
     end
     %clear labels, axis & line properties for the next plot

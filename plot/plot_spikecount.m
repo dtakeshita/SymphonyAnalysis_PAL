@@ -37,12 +37,18 @@ end
     baselineRate_fano = baselineRate_all.var/baselineRate_all.mean;
     str_baselineRate = sprintf('%3.2g(%3.2g)Hz,F:%3.2g',baselineRate_all.mean,...
         baselineRate_all.SD,baselineRate_fano);
-    %linear regression
+    
     %Fitting
-    lin_fit = loglog_linfit(dat);
+    if strcmp(stim_type, 'LightStep_20')
+        %linear regression-slope in log-log plot
+        lin_fit = loglog_linfit(dat);
+    elseif strcmp(stim_type, 'LightStep_5000')
+        threshold_polyfit(dat);
+    end
+    
     %title
     ttl_str = fig_para.title.string;
-    if ~isempty(lin_fit)
+    if exist(lin_fit,'var') && ~isempty(lin_fit)
         fig_para.title.string = sprintf('%s:%s,%s,slope:%4.2g',fig_para.title.string,str_baselineRate,str_intvl,lin_fit.slope);
         add_linfit = true;
     else

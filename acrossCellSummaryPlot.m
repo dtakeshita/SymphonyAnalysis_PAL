@@ -79,7 +79,8 @@ function acrossCellSummaryPlot()
             cur_tree = calcSpikeCountDiff(cur_tree, param_diff);
             cur_parent = cur_tree.get(1);
             %% Spike counts
-            [FH, ngph,fig_para,~, spc_measures] = plot_spikecount( cur_parent, fig_para, celltype_name );
+            [FH, ngph,fig_para,~, spc_measures] = plot_spikecount( cur_parent, fig_para,...
+                celltype_name, stimulus_type);
             %slope in log-log plot
             tmp_spc_slope(ncell_nonempty ).cellname = cellName;
             tmp_spc_slope(ncell_nonempty ).x = classify_names(celltype_name,splitter_strain);
@@ -135,7 +136,7 @@ function acrossCellSummaryPlot()
     fig_para.axis_prop.xscale = 'linear';fig_para.axis_prop.yscale = 'log';
     fig_para.axis_prop.xlim = [0 3]; 
     fig_para.xlabel.string = 'Strain';fig_para.ylabel.string = 'FOS 0.75';
-    [FH, fig_para] = plot_across_celltype(FOS_75, cellType_unique, fig_para, splitter);
+    [FH, fig_para] = plot_across_celltype(FOS_75, cellType_unique, fig_para, splitter,'geometricmean');
     fig_para.xlabel.string = 'Strain';fig_para.ylabel.string = 'FOS 0.85';
     [FH, fig_para] = plot_across_celltype(FOS_85, cellType_unique, fig_para, splitter);
     %% Plot slopes from spike count
