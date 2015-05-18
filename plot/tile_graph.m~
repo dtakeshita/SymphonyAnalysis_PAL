@@ -43,14 +43,20 @@ function [ngph, FH, AH, LH, GH] = tile_graph( dat, para_fig, h_plot, ngph, FHoff
         line_prop = struct([]);
     end
     if isfield(para_fig,'line_prop_single')
+        try
         set(LH,para_fig.line_prop_single);
+
     end
         
     plot_format(axis_prop,line_prop,gcf,AH);%(axisProp,lineProp,FH,AH)
     % Set labels
+    try
     set_label(para_fig, 'xlabel');
     set_label(para_fig, 'ylabel');
     set_label(para_fig, 'title');
+    catch
+        2;
+    end
     
     % set figure title as annotation
     if isfield(para_fig, 'annotation')

@@ -10,6 +10,7 @@ elseif length(param)==3
 end
 %% Calculate RMS error
 e = norm(y-yfit);
+%e = norm( (y-yfit)./((y+yfit)/2) );
 
 
 

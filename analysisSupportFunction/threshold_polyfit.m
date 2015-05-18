@@ -1,6 +1,6 @@
-function err = threshold_polyfit(dat)
-    close all;
+function out = threshold_polyfit(dat)
     if nargin==0
+        close all;
        %WT-ON
 %        mouse = 'WT-ON:030315Ac12';
 %        dat.x = [
@@ -56,26 +56,26 @@ function err = threshold_polyfit(dat)
        2.002000000000000
        ];
     %    %030315Ac4
-    %    mouse = 'OPN-ON:030315Ac4';
-    %    dat.x=[
-    %    %0
-    %    0.099085199724431
-    %    0.297255599173293
-    %    0.709147878757237
-    %    1.526571291731537
-    %    %3.039356996459430
-    %    %5.722847866593350
-    %    ];
-    %     dat.y = 1.0e+02*...
-    %    [
-    %    %0.128000000000000
-    %   -0.002000000000000
-    %    0.056000000000000
-    %    0.134000000000000
-    %    0.298000000000000
-    %    %1.670000000000000
-    %    %9.332000000000001
-    %    ];
+%        mouse = 'OPN-ON:030315Ac4';
+%        dat.x=[
+%        0
+%        0.099085199724431
+%        0.297255599173293
+%        0.709147878757237
+%        1.526571291731537
+%        3.039356996459430
+%        5.722847866593350
+%        ];
+%         dat.y = 1.0e+02*...
+%        [
+%        0.128000000000000
+%       -0.002000000000000
+%        0.056000000000000
+%        0.134000000000000
+%        0.298000000000000
+%        1.670000000000000
+%        9.332000000000001
+%        ];
     else
         mouse ='';
     end
@@ -86,6 +86,11 @@ function err = threshold_polyfit(dat)
     npt = length(dat.x);
     npara = length(para_init);
     nfit = npt-npara+1;
+    if nfit == 0
+        out.x = []; out.y=[];
+        out.thresh = NaN;
+        return
+    end
     err = zeros(nfit,1);
     ndat = err;
     optpara_set = zeros(nfit,npara);
@@ -95,7 +100,7 @@ function err = threshold_polyfit(dat)
         datfit_y_eval = eval_fit(datfit_x,para_opt);
         %store data
         ndat(n-npara+1) = n;
-        err(n-npara+1) = norm(datfit_y-datfit_y_eval)/sqrt(n);
+        err(n-npara+1) = norm(datfit_y-datfit_y_eval)/n;
         optpara_set(n-npara+1,:) = para_opt;
         if nargin==0
            xfit = 0:0.0001:max(datfit_x);
@@ -106,12 +111,22 @@ function err = threshold_polyfit(dat)
            set(gca,'yscale','log')
         end
     end
-    [err_min,idx_min] = min(err);
+    %[err_min,idx_min] = min(err);%consider:avoid negative value??
+    %Avoid negative threshold
+    th_set = get_thresh(optpara_set);
+    idx_pos = find(th_set>0);
+    [err_min,idx_min] = min(err(idx_pos));
+    idx_min = idx_pos(idx_min);
+    
     datfit_x = dat.x(1:ndat(idx_min));
-    datfit_y = dat.x(1:ndat(idx_min));
+    datfit_y = dat.y(1:ndat(idx_min));
     optpara = optpara_set(idx_min,:);
     xfit = 0:0.0001:max(datfit_x);
     yfit = eval_fit(xfit,optpara);
+    
+    out.x = xfit; out.y=yfit;
+    out.thresh = get_thresh(optpara);
+    
     if nargin==0
         figure
         plot(dat.x,dat.y,'bo','MarkerSize',6)
@@ -129,7 +144,16 @@ function err = threshold_polyfit(dat)
         title(str_ttl)
     end
 end
-
+function th = get_thresh(para)
+    [nset,npara] = size(para);
+    if npara==4
+        th = para(:,3);
+    elseif npara==3
+        th = para(:,2);
+    else
+        th = NaN*ones(nset,1);
+    end
+end
 function yfit = eval_fit(x,para)
     yfit = zeros(size(x));
     if length(para)==4
@@ -139,5 +163,4 @@ function yfit = eval_fit(x,para)
         a=para(1);theta=para(2);n=para(3);
         yfit(x>theta) = a*(x(x>theta)-theta).^n;
     end
-
 end

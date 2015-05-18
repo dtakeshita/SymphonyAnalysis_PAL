@@ -31,12 +31,9 @@ function [ FH, fig_para ] = plot_across_celltype( dat, celltypeList, fig_para, s
         yscale_changed = false;
         y_mean = zeros(n_plot,1);
         for np=1:n_plot
-            try
-            tmp_dat.x = [dat_plot{np}.x];%convert structure to array
-            tmp_dat.y = [dat_plot{np}.y];
-            catch
-                2;
-            end
+%             tmp_dat.x = [dat_plot{np}.x];%convert structure to array
+%             tmp_dat.y = [dat_plot{np}.y];
+            [tmp_dat.x, tmp_dat.y] = datStruct2vec(dat_plot{np});
             tmp_celltype = celltype_plot{np};
             if ~isempty(strfind(tmp_celltype,'+/+'))
                 fig_para.line_prop_single.MarkerFaceColor = cl{1};
@@ -54,11 +51,7 @@ function [ FH, fig_para ] = plot_across_celltype( dat, celltypeList, fig_para, s
                     2;
                 end
             end
-            try
-                [fig_para.ngph, FH, AH, LHs(np)] = tile_graph(tmp_dat,fig_para, 'holdOnScatter', fig_para.ngph, fig_para.FHoffset);
-            catch
-                2;
-            end
+            [fig_para.ngph, FH, AH, LHs(np)] = tile_graph(tmp_dat,fig_para, 'holdOnScatter', fig_para.ngph, fig_para.FHoffset);
             fig_para.ngph = fig_para.ngph-1;%To superpose plots
             if strcmp(mean_opt,'arithmaticmean')
                 y_mean(np) = nanmean(tmp_dat.y);%Ignore NaN
@@ -66,9 +59,16 @@ function [ FH, fig_para ] = plot_across_celltype( dat, celltypeList, fig_para, s
                 y_mean(np) = geomean(tmp_dat.y(~isnan(tmp_dat.y)));
             end
         end
+  
         str_legend = cellfun(@(x)x(5:7),celltype_plot,'uniformoutput',false);
-        %legend(LHs,celltype_plot)
-        legend( LHs,str_legend )
+%         LHs = LHs(LHs>0);%Choose actual handle
+%         str_legend(LHs>0);
+        try
+            legend(LHs,celltype_plot)
+            legend( LHs,str_legend )
+        catch
+            2;
+        end
         if yscale_changed
             fig_para.axis_prop.yscale = yscale_old;%change back to the original axis property
         end
@@ -84,6 +84,21 @@ function [ FH, fig_para ] = plot_across_celltype( dat, celltypeList, fig_para, s
     end
     %clear labels, axis & line properties for the next plot
     clear_props(fig_para,{'axis_prop','line_prop','line_prop_single'});
+end
+
+function [x,y] = datStruct2vec(dat)
+    ndat = length(dat);
+    x=NaN*ones(1,ndat); 
+    y=x;
+    for nd=1:ndat
+        if isempty(dat(nd).x)||isempty(dat(nd).y)
+            continue;
+        else
+           x(nd) = dat(nd).x;
+           y(nd) = dat(nd).y;
+        end
+    end
+
 end
 
 function p = clear_props(p,f)

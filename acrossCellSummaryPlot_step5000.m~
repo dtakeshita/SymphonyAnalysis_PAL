@@ -1,4 +1,4 @@
-function acrossCellSummaryPlot()
+function acrossCellSummaryPlot_step5000()
     close all;
     %parameters
 %     nrow = 3; ncol = 3;
@@ -6,6 +6,7 @@ function acrossCellSummaryPlot()
     global ANALYSIS_FOLDER
     save_path = fullfile(ANALYSIS_FOLDER,'SummaryPlots','AcrossCells');
     cellName_set = uigetfile([ANALYSIS_FOLDER,'analysisTrees' filesep],'MultiSelect','on');
+    %cellName_set = {'022415Ac4'};%test purpose
     if ~iscell(cellName_set)
        cellName_set = {cellName_set}; 
     end
@@ -22,12 +23,12 @@ function acrossCellSummaryPlot()
     spc_perR_max = cell(n_cellType,1);
     FOS_75 = spc_perR_max;
     FOS_85 = spc_perR_max;
-    spc_slope = spc_perR_max;
+    spc_measure = spc_perR_max;
     base_FR = spc_perR_max;
     %Set a loop for different stimuli??
     analysis_class = 'LightStep';
-    stimulus_type = 'LightStep_20';
-%     stimulus_type = 'LightStep_5000';
+    %stimulus_type = 'LightStep_20';
+    stimulus_type = 'LightStep_5000';
     splitter_strain = {'+/+','-/-'};
     for nt = 1:n_cellType
         celltype_name = cellType_unique{nt};
@@ -44,7 +45,7 @@ function acrossCellSummaryPlot()
         fig_para.annotation.string = [stimulus_type,' ',celltype_name];
         %Across cell-type analysis
         %tmp_spc_perR_max = zeros(n_cells_sametype,1);
-        tmp_spc_slope = struct([]);
+        tmp_spc_measure = struct([]);
         tmp_spc_perR_max = struct([]);
         tmp_FOS_75 = struct([]);
         tmp_FOS_85 = struct([]);
@@ -68,7 +69,7 @@ function acrossCellSummaryPlot()
             %% Analysis over leaves (e.g. response vs R*, etc.) should be done here!
             cur_tree = tr.subtree(idx);
             %% Calculate measures
-            twindow_offset_post = 0;
+            twindow_offset_post = 1000;
             %FOS
             param_FOS = get_param_FOS(stimulus_type);
             param_FOS.twindow_offset_post=twindow_offset_post;
@@ -79,12 +80,17 @@ function acrossCellSummaryPlot()
             cur_tree = calcSpikeCountDiff(cur_tree, param_diff);
             cur_parent = cur_tree.get(1);
             %% Spike counts
-            [FH, ngph,fig_para,~, spc_measures] = plot_spikecount( cur_parent, fig_para,...
-                celltype_name, stimulus_type);
-            %slope in log-log plot
-            tmp_spc_slope(ncell_nonempty ).cellname = cellName;
-            tmp_spc_slope(ncell_nonempty ).x = classify_names(celltype_name,splitter_strain);
-            tmp_spc_slope(ncell_nonempty ).y = spc_measures.fit_result.slope;
+            fig_para.axis_prop.xscale = 'linear';
+            fig_para.axis_prop.yscale = 'linear';
+            [FH, ngph,fig_para,~, spc_measures] = plot_spikecount( cur_parent, fig_para, celltype_name, stimulus_type );
+            %Threshold in polynomial
+            tmp_spc_measure(ncell_nonempty ).cellname = cellName;
+            tmp_spc_measure(ncell_nonempty ).x = classify_names(celltype_name,splitter_strain);
+            tmp_spc_measure(ncell_nonempty ).y = spc_measures.fit_result.thresh;
+            %Log-linear plot
+            fig_para.axis_prop.xscale = 'log';
+            fig_para.axis_prop.yscale = 'linear';
+            [FH, ngph,fig_para,~, spc_measures] = plot_spikecount( cur_parent, fig_para, celltype_name, stimulus_type );
             %baseline FR
             tmp_baseFR(ncell_nonempty ).cellname = cellName;
             tmp_baseFR(ncell_nonempty ).x = classify_names(celltype_name,splitter_strain);
@@ -95,21 +101,21 @@ function acrossCellSummaryPlot()
             tmp_spc_perR_max(ncell_nonempty ).x = max_val.x; 
             tmp_spc_perR_max(ncell_nonempty ).y = max_val.y;
             %% FOS
-            [FH, fig_para, th] = plot_FOS(cur_tree.get(1), fig_para);
-            tmp_FOS_75(ncell_nonempty ).cellname = cellName;
-            tmp_FOS_75(ncell_nonempty ).y = th.x_75;
-            tmp_FOS_75(ncell_nonempty ).x = classify_names(celltype_name,splitter_strain);
-            
-            tmp_FOS_85(ncell_nonempty ).cellname = cellName;
-            tmp_FOS_85(ncell_nonempty ).y = th.x_85;
-            tmp_FOS_85(ncell_nonempty ).x = classify_names(celltype_name,splitter_strain);
+%             [FH, fig_para, th] = plot_FOS(cur_tree.get(1), fig_para);
+%             tmp_FOS_75(ncell_nonempty ).cellname = cellName;
+%             tmp_FOS_75(ncell_nonempty ).y = th.x_75;
+%             tmp_FOS_75(ncell_nonempty ).x = classify_names(celltype_name,splitter_strain);
+%             
+%             tmp_FOS_85(ncell_nonempty ).cellname = cellName;
+%             tmp_FOS_85(ncell_nonempty ).y = th.x_85;
+%             tmp_FOS_85(ncell_nonempty ).x = classify_names(celltype_name,splitter_strain);
             ncell_nonempty = ncell_nonempty +1;
         end
         %store meausred values for across cell-type analysis
         spc_perR_max{nt} = tmp_spc_perR_max;
-        FOS_75{nt} = tmp_FOS_75;
-        FOS_85{nt} = tmp_FOS_85;
-        spc_slope{nt} = tmp_spc_slope;
+%         FOS_75{nt} = tmp_FOS_75;
+%         FOS_85{nt} = tmp_FOS_85;
+        spc_measure{nt} = tmp_spc_measure;
         base_FR{nt} = tmp_baseFR;
         sname = sprintf('%s_%s_SummaryPlot.pdf',stimulus_type, celltype_name);
         sname(isspace(sname))='_';
@@ -133,38 +139,39 @@ function acrossCellSummaryPlot()
     fig_para.xlabel.string = 'R*@max';fig_para.ylabel.string = 'max(SPC/R*)';
     [FH, fig_para] = plot_across_celltype(spc_perR_max, cellType_unique, fig_para, splitter);
     %% Plot FOS threshold
+%     fig_para.axis_prop.xscale = 'linear';fig_para.axis_prop.yscale = 'log';
+%     fig_para.axis_prop.xlim = [0 3]; 
+%     fig_para.xlabel.string = 'Strain';fig_para.ylabel.string = 'FOS 0.75';
+%     [FH, fig_para] = plot_across_celltype(FOS_75, cellType_unique, fig_para, splitter);
+%     fig_para.xlabel.string = 'Strain';fig_para.ylabel.string = 'FOS 0.85';
+%     [FH, fig_para] = plot_across_celltype(FOS_85, cellType_unique, fig_para, splitter);
+    %% Plot threshold determined from spike count
     fig_para.axis_prop.xscale = 'linear';fig_para.axis_prop.yscale = 'log';
+    fig_para.xlabel.string = 'Strain';fig_para.ylabel.string = 'Threshold';
     fig_para.axis_prop.xlim = [0 3]; 
-    fig_para.xlabel.string = 'Strain';fig_para.ylabel.string = 'FOS 0.75';
-    [FH, fig_para] = plot_across_celltype(FOS_75, cellType_unique, fig_para, splitter,'geometricmean');
-    fig_para.xlabel.string = 'Strain';fig_para.ylabel.string = 'FOS 0.85';
-    [FH, fig_para] = plot_across_celltype(FOS_85, cellType_unique, fig_para, splitter);
-    %% Plot slopes from spike count
-    fig_para.axis_prop.xscale = 'linear';fig_para.axis_prop.yscale = 'linear';
-    fig_para.xlabel.string = 'Strain';fig_para.ylabel.string = 'Slope';
-    [FH, fig_para] = plot_across_celltype(spc_slope, cellType_unique, fig_para, splitter);
+    [FH, fig_para] = plot_across_celltype(spc_measure, cellType_unique, fig_para, splitter);
     %% Plot baseline firing rate
     fig_para.axis_prop.xscale = 'linear';fig_para.axis_prop.yscale = 'linear';
     fig_para.xlabel.string = 'Strain';fig_para.ylabel.string = 'Intrinsic firing rate';
     [FH, fig_para] = plot_across_celltype(base_FR, cellType_unique, fig_para, splitter);
-    fig_para.axis_prop=rmfield(fig_para.axis_prop,'xlim');
-    %% Plot slope vs th_75?
-    slope_th75 = pairing_measures( FOS_75, spc_slope);
-    fig_para.axis_prop.xscale = 'log';fig_para.axis_prop.yscale = 'linear';
-    fig_para.xlabel.string = 'Th75';fig_para.ylabel.string = 'Slope';
-    [FH, fig_para] = plot_across_celltype(slope_th75, cellType_unique, fig_para, splitter);
+    %fig_para.axis_prop=rmfield(fig_para.axis_prop,'xlim');
+%     %% Plot slope vs th_75?
+%     slope_th75 = pairing_measures( FOS_75, spc_slope);
+%     fig_para.axis_prop.xscale = 'log';fig_para.axis_prop.yscale = 'linear';
+%     fig_para.xlabel.string = 'Th75';fig_para.ylabel.string = 'Slope';
+%     [FH, fig_para] = plot_across_celltype(slope_th75, cellType_unique, fig_para, splitter);
     %% Plot slope vs intrinsic-FR
-    slope_FR = pairing_measures( base_FR, spc_slope);
+    slope_FR = pairing_measures( base_FR, spc_measure);
     fig_para.axis_prop.xscale = 'linear';fig_para.axis_prop.yscale = 'linear';
-    fig_para.xlabel.string = 'Intrinsic firing rate (Hz)';fig_para.ylabel.string = 'Slope';
+    fig_para.xlabel.string = 'Intrinsic firing rate (Hz)';fig_para.ylabel.string = 'Threshold';
     [FH, fig_para] = plot_across_celltype(slope_FR, cellType_unique, fig_para, splitter);
     
-    %% Plot th_75 vs intrinsic-FR
-    th75_FR = pairing_measures( base_FR, FOS_75);
-    fig_para.axis_prop.xscale = 'linear';fig_para.axis_prop.yscale = 'log';
-    fig_para.xlabel.string = 'Intrinsic firing rate (Hz)';fig_para.ylabel.string = 'Th75';
-    [FH, fig_para] = plot_across_celltype(th75_FR, cellType_unique, fig_para, splitter);
-    
+%     %% Plot th_75 vs intrinsic-FR
+%     th75_FR = pairing_measures( base_FR, FOS_75);
+%     fig_para.axis_prop.xscale = 'linear';fig_para.axis_prop.yscale = 'log';
+%     fig_para.xlabel.string = 'Intrinsic firing rate (Hz)';fig_para.ylabel.string = 'Th75';
+%     [FH, fig_para] = plot_across_celltype(th75_FR, cellType_unique, fig_para, splitter);
+%     
     
     %% Save across cell summary
     sname = [stimulus_type,'_AcrossCelltypeSummary.pdf'];
