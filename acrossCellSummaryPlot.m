@@ -168,6 +168,7 @@ function acrossCellSummaryPlot()
     
     %% Save across cell summary
     sname = [stimulus_type,'_AcrossCelltypeSummary.pdf'];
+    %sname = [stimulus_type,'_SannaCelltypeSummary.pdf'];
     setFigureSize();
     save_figs('',sname,save_path,'saveas');
 
