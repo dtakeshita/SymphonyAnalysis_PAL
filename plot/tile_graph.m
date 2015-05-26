@@ -25,6 +25,9 @@ function [ngph, FH, AH, LH, GH] = tile_graph( dat, para_fig, h_plot, ngph, FHoff
     else %assume lind handle
         LH = copyobj(h_plot, AH);
     end
+    if isempty(LH)
+        LH = NaN;
+    end
     %Set legend
     if isfield(dat,'legend')
         leg = legend(dat.legend.string);
