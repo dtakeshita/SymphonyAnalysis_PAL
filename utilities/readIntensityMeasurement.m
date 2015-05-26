@@ -5,9 +5,11 @@ function out = readIntensityMeasurement( exp_date )
         exp_date = [2015,1,27];
         
     end
-    file_path = '/Users/dtakeshi/Dropbox/AlaLaurila-Lab-Yoda/Patch rig';
+    file_root = fullfile(getenv('HOME'),'Dropbox','AlaLaurila-Lab-Yoda');
+    rig_folder = 'Patch rig';
+    %file_path = '/Users/dtakeshi/Dropbox/AlaLaurila-Lab-Yoda/Patch rig';
     fname = 'IntensityMeasurements.xlsx';
-    [ndata, text, table] = xlsread(fullfile(file_path,fname));
+    [ndata, text, table] = xlsread(fullfile(file_root,rig_folder,fname));
     field_names = get_field_names(table(1,:));
     values = table(2:end,:);
     values_map = containers.Map(field_names,mat2cell(values,size(values,1),ones(1,size(values,2))));

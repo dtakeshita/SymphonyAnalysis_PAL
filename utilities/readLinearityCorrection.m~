@@ -7,11 +7,11 @@ function out = readLinearityCorrection( rig_name, ch_LED_set, t_stim_set )
          ch_LED_set = {'Ch1'};
          t_stim_set = [20 500 5000];
      end
-%      file_root = '/Users/dtakeshi/Documents/Data/StimulusCalibration/Photodiode/';
-%      rig_folder = ['Rig',upper(rig_name)];
-     file_root = fullfile(getenv('HOME'),'Dropbox','AlaLaurila-Lab-Yoda');
-     rig_folder = 'Patch rig';
+     file_root = '/Users/dtakeshi/Documents/Data/StimulusCalibration/Photodiode/';
      file_folder = 'ForLinearityCorrection';
+     rig_folder = ['Rig',upper(rig_name)];
+     file_root = fullfile(getenv('HOME'),'Dropbox','AlaLaurila-Lab-Yoda');
+    rig_folder = 'Patch rig';
      
      file_fullpath = fullfile(file_root,rig_folder,file_folder);
      out = containers.Map();

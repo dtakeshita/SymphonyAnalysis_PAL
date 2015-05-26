@@ -4,12 +4,11 @@ function [t_switch, NDF] = readNDF_log(rig, exp_date)
     if nargin == 0
         rig = 'a';
         %exp_date = [2015,1,27];
-        exp_date = [2015,5,21];
+        exp_date = [2015,2,5];
     end
     %file_root = '/Users/dtakeshi/Documents/Data';
-    file_root = fullfile(getenv('HOME'),'Dropbox','AlaLaurila-Lab-Yoda');
-    %rig_folder = ['Rig',upper(rig)];
-    rig_folder = 'Patch rig';
+    file_root = fullfile(getenv('HOME'),
+    rig_folder = ['Rig',upper(rig)];
     log_folder = 'NDF_log';
     fname = sprintf('NDFlog_%d_%02i%02i',exp_date);
     [ndata, text, alldata] = xlsread(fullfile(file_root,rig_folder,log_folder, fname));
